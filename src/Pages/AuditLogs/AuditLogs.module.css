@@ -1,0 +1,76 @@
+.whole {
+    margin-top: 96px;
+    padding: 32px 40px;
+    width: 100%;
+}
+
+.auditLogsHeader {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+.auditLogsHeader h2 {
+    font-size: 32px;
+    font-weight: 600;
+    color: #36394A;
+}
+
+.periods {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid #ECEFF3;
+    border-radius: 8px;
+    padding: 4px 4px 4px 12px;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #0D0D12;
+}
+.periods button {
+    padding: 4px 12px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 12px;
+    font-weight: 500;
+    color: #818898;
+}
+.periods .active {
+    padding: 4px 12px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    background: #ECEFF3;
+    font-size: 12px;
+    font-weight: 500;
+    color: #36394A;
+}
+
+.tableDiv {
+    background: #FFFFFF;
+    padding: 16px 24px;
+    border-radius: 16px;
+}
+
+.auditTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+.auditTable th {
+    padding: 12px 0;
+    text-align: left;
+    font-size: 14px;
+    font-weight: 500;
+    color: #666D80;
+}
+.auditTable tr,
+.auditTable thead {
+    border-bottom: 1px solid #DFE1E7;
+}
+.auditTable td {
+    padding: 12px 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: #0D0D12;
+}

@@ -1,0 +1,66 @@
+.header {
+    width: 100%;
+    background: #FFFFFF;
+    display: flex;
+    justify-content: space-between;
+    height: 96px;
+    position: fixed;
+    /* position: absolute; */
+    z-index: 10;
+    padding: 27px 40px;
+}
+
+.header .logo {
+    width: 40px;
+    height: 40px;
+}
+
+.header .links {
+    display: flex;
+    gap: 16px;
+}
+.header .links button {
+    background: #ECEFF3;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #666D80;
+    height: fit-content;
+    border: none;
+}
+.header .links .active {
+    background: #0D0D12;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #FFFFFF;
+    border: none;
+}
+
+.buttons {
+    display: flex;
+    gap: 9px;
+}
+.buttons button {
+    background: #ECEFF3;
+    border: none;
+    outline: none;
+    border-radius: 50px;
+    padding: 12px;
+}
+.buttons button img {
+    width: 16px;
+    height: 16px;
+}
+.buttons div {
+    background: #0D0D12;
+    border-radius: 50px;
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+}
