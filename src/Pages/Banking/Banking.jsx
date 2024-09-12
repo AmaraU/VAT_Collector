@@ -10,6 +10,8 @@ export const Banking = () => {
     const [ period, setPeriod ] = useState('daily');
     const [ pieItems, setPieItems ] = useState([]);
     const [ lineItems, setLineItems ] = useState([]);
+    const [ openCustom, setOpenCustom ] = useState(false);
+    const popupRef = useRef(null);
 
     const formatNumber = (number) => {
         return new Intl.NumberFormat('en-US').format(number);
@@ -28,6 +30,9 @@ export const Banking = () => {
     };
 
     const pieOptions = {
+        animation: {
+            duration: 300,
+        },
         plugins: {
             legend: {
                 display: false,
@@ -135,6 +140,23 @@ export const Banking = () => {
         updateLineItems();
     }, []);
 
+    const setCustom = () => {
+        setPeriod('custom');
+        setOpenCustom(false);        
+    }
+
+    const handleClickOutside = (event) => {
+        if (popupRef.current && !popupRef.current.contains(event.target)) {
+            setOpenCustom(false);
+        }
+    };
+
+    useEffect(() => {
+        document.addEventListener('click', handleClickOutside, true);
+        return () => {
+            document.removeEventListener('click', handleClickOutside, true);
+        };
+    }, []);
 
 
 
@@ -149,7 +171,17 @@ export const Banking = () => {
                     <button onClick={()=>setPeriod('daily')} className={period === 'daily' ? styles.active : ''}>Daily</button>
                     <button onClick={()=>setPeriod('weekly')} className={period === 'weekly' ? styles.active : ''}>Weekly</button>
                     <button onClick={()=>setPeriod('monthly')} className={period === 'monthly' ? styles.active : ''}>Monthly</button>
-                    <button onClick={()=>setPeriod('custom')} className={period === 'custom' ? styles.active : ''}>Custom</button>
+                    <div>
+                        <button onClick={()=>setOpenCustom(!openCustom)} className={period === 'custom' ? styles.active : ''}>Custom</button>
+                        <div className={`${styles.closed} ${openCustom && styles.customDiv}`} ref={popupRef}>
+                            <h4>CUSTOM PERIOD</h4>
+                            <div className={styles.dates}>
+                                <input type="date" />
+                                <input type="date" />
+                            </div>
+                            <button onClick={setCustom}>Set Custom Date</button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
