@@ -16,6 +16,10 @@ export const Overview = () => {
     const formatNumber = (number) => {
         return new Intl.NumberFormat('en-US').format(number);
     };
+
+    const banking = ['First Bank', 'Eco Bank', 'Access Bank', 'GTBank', 'Zenith Bank'];
+    const telcos = ['Airtel', 'MTN', 'Glo', '9Mobile'];
+    const invoicing = ['NIRS', 'NNPC', 'NCS', 'NBC'];
     
     const pieData = {
         labels: ['Banking', 'Telcos', 'Invoicing'],
@@ -207,7 +211,7 @@ export const Overview = () => {
                 
                 <div className={styles.lineDiv}>
                     <h5>USE CASES</h5>
-                    <div style={{height: '300px'}}>
+                    <div style={{height: '310px', width: '100%'}}>
                         <Line data={lineData} options={lineOptions} id="lineChart" />
                     </div>
                     <div className={styles.lineLegend}>
@@ -220,22 +224,51 @@ export const Overview = () => {
                     </div>
                 </div>
                 
-                <div className={styles.pieDiv}>
-                    <h5>TOP PERFORMERS</h5>
-                    <div className={styles.pieChart}>
-                        <div style={{width: '250px'}}>
-                            <Pie data={pieData} options={pieOptions} id="pieChart" />
-                        </div>
-                        <div>
-                            {pieItems.map((item, index) => (
-                                <div className={styles.legend} key={index}>
-                                    <div className={styles.labelColor} style={{backgroundColor: item.color}}></div>
-                                    <div>
-                                        <p>{item.label}</p>
-                                        <h5>{formatNumber(item.value)}</h5>
+                <div className={styles.flexDiv}>
+                    <div className={styles.pieDiv}>
+                        <h5>TOP PERFORMERS</h5>
+                        <div className={styles.pieChart}>
+                            <div style={{width: '230px'}}>
+                                <Pie data={pieData} options={pieOptions} id="pieChart" />
+                            </div>
+                            <div className={styles.pieLegend}>
+                                {pieItems.map((item, index) => (
+                                    <div className={styles.pieLegendItem} key={index}>
+                                        <div className={styles.labelColor} style={{backgroundColor: item.color}}></div>
+                                        <div>
+                                            <p>{item.label}</p>
+                                            <h6>{formatNumber(item.value)}</h6>
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className={styles.ratingDiv}>
+                        <h5>TOP RATINGS</h5>
+                        
+                        <div className={styles.ratings}>
+                            <div className={styles.list}>
+                                <h6>Banking</h6>
+                                {banking.map((bank, i) => (
+                                    <p>{bank}</p>
+                                ))}
+                            </div>
+
+                            <div className={styles.list}>
+                                <h6>Telcos</h6>
+                                {telcos.map((tel, i) => (
+                                    <p>{tel}</p>
+                                ))}
+                            </div>
+
+                            <div className={styles.list}>
+                                <h6>Invoicing</h6>
+                                {invoicing.map((invo, i) => (
+                                    <p>{invo}</p>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -4,11 +4,11 @@ import styles from './App.module.css'
 import { DashboardLayout } from './Pages/DashboardLayout';
 import { SignIn } from './Pages/SignIn/SignIn';
 import { Overview } from './Pages/Overview/Overview';
-import { AuditLogs } from './Pages/AuditLogs/AuditLogs';
-import { Reports } from './Pages/Reports/Reports';
 import { Banking } from './Pages/Banking/Banking';
 import { Telcos } from './Pages/Telcos/Telcos';
 import { Invoicing } from './Pages/Invoicing/Invoicing';
+import { AuditLogs } from './Pages/AuditLogs/AuditLogs';
+import { Reports } from './Pages/Reports/Reports';
 
 
 
