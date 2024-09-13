@@ -11,15 +11,18 @@ export const Overview = () => {
     const [ pieItems, setPieItems ] = useState([]);
     const [ lineItems, setLineItems ] = useState([]);
     const [ openCustom, setOpenCustom ] = useState(false);
+    const [ updateIndex, setUpdateIndex ] = useState(0);
     const popupRef = useRef(null);
-
-    const formatNumber = (number) => {
-        return new Intl.NumberFormat('en-US').format(number);
-    };
 
     const banking = ['First Bank', 'Eco Bank', 'Access Bank', 'GTBank', 'Zenith Bank'];
     const telcos = ['Airtel', 'MTN', 'Glo', '9Mobile'];
     const invoicing = ['NIRS', 'NNPC', 'NCS', 'NBC'];
+
+    const updates = [
+        'Someone just made a transaction',
+        'Someone else just made another transaction',
+        'You guessed it. Another transaction.'
+    ];
     
     const pieData = {
         labels: ['Banking', 'Telcos', 'Invoicing'],
@@ -144,6 +147,11 @@ export const Overview = () => {
         updateLineItems();
     }, []);
 
+
+    const formatNumber = (number) => {
+        return new Intl.NumberFormat('en-US').format(number);
+    };
+
     const setCustom = () => {
         setPeriod('custom');
         setOpenCustom(false);        
@@ -162,12 +170,23 @@ export const Overview = () => {
         };
     }, []);
 
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setUpdateIndex((prevIndex) => (prevIndex + 1) % updates.length);
+        }, 10000);
+        return() => clearInterval(interval);
+    }, [updates.length]);
+
 
     return (
         <div className={styles.whole}>
             
             <div className={styles.overviewHeader}>
                 <h2>Overview</h2>
+
+                <div className={styles.updates}>
+                    <div className={styles.slider}>{updates[updateIndex]}</div>
+                </div>
 
                 <div className={styles.periods}>
                     Period:
