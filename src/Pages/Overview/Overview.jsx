@@ -50,10 +50,10 @@ export const Overview = () => {
         'Someone else just made another transaction',
         'You guessed it. Another transaction.'
     ];
-    
+
     
     const pieData = {
-        labels: [ bankingData.tenant.toUpperCase(), telcosData.tenant.toUpperCase(), invoicingData.tenant.toUpperCase() ],
+        labels: [ 'BANKING', "TELCOS", 'INVOICING' ],
         datasets: [
             {
                 label: "",
@@ -80,7 +80,7 @@ export const Overview = () => {
         labels: ['', '', '', '', '', '', ''],
         datasets: [
             {
-                label: bankingData.tenant.toUpperCase(),
+                label: 'BANKING',
                 data: [65000000, 22000000, 80000000, 81000000, 56000000, 55000000, 40000000],
                 fill: false,
                 borderColor: '#4C72FA',
