@@ -171,7 +171,6 @@
     height: 335px;
 }
 .legend {
-    width: 95px;
     display: flex;
     gap: 9px;
 }

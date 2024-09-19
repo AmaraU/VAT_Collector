@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import styles from './Invoicing.module.css';
 import { Pie, Line } from 'react-chartjs-2';
 import { Chart as ChartJS, LineElement, ArcElement, CategoryScale, LinearScale, PointElement, Tooltip, Legend } from 'chart.js';
+import axios from "axios";
 
 ChartJS.register(LineElement, ArcElement, CategoryScale, LinearScale, PointElement, Tooltip, Legend);
 
@@ -11,19 +12,44 @@ export const Invoicing = () => {
     const [ pieItems, setPieItems ] = useState([]);
     const [ lineItems, setLineItems ] = useState([]);
     const [ openCustom, setOpenCustom ] = useState(false);
+    const [ invoicingData, setInvoicingData ] = useState([]);
+    const [ invoicing, setInvoicing ] = useState([]);
+    const [ pieInvoicing, setPieInvoicing ] = useState([]);
     const popupRef = useRef(null);
+
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    const fetchData = async () => {
+        try {
+            const result = await axios('http://41.78.157.3/FirsCollection.API/api/reports/dashboard');
+            
+            setInvoicingData(result.data.result.data.summaryDetails.dashBoardReport[2]);
+            setInvoicing(result.data.result.data.summaryDetails.dashBoardReport[2].transactionDetails.sort((a, b) => b.totalVat - a.totalVat).slice(0,3));
+            setPieInvoicing(result.data.result.data.summaryDetails.dashBoardReport[2].transactionDetails.sort((a, b) => b.totalVat - a.totalVat).slice(0,3));
+        
+        } catch (err) { console.log(err); }
+    }
+
 
     const formatNumber = (number) => {
         return new Intl.NumberFormat('en-US').format(number);
     };
+    const formatNumberDec = (number) => {
+        return new Intl.NumberFormat('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }).format(number);
+    };
     
     const pieData = {
-        labels: ['NNPC', 'NBC', 'NCS'],
+        labels: pieInvoicing.map(item => item.name.toUpperCase()),
         datasets: [
             {
-                label: "",
-                data: [547954, 253977, 203977],
-                backgroundColor: [ '#4C72FA', '#FFBE4C', '#40C4AA'],
+                data: pieInvoicing.map(item => item.totalVat),
+                backgroundColor: [ '#4C72FA', '#FFBE4C', '#40C4AA' ],
                 borderWidth: 0,
             },
         ],
@@ -43,40 +69,20 @@ export const Invoicing = () => {
     
     const lineData = {
         labels: ['', '', '', '', '', '', ''],
-        datasets: [
-            {
-                label: 'NIRS',
-                data: [65000000, 22000000, 80000000, 81000000, 56000000, 55000000, 40000000],
-                fill: false,
-                borderColor: '#4C72FA',
-                pointRadius: 0,
-                borderWidth: 2,
-            },
-            {
-                label: 'NNPC',
-                data: [45000000, 49000000, 60000000, 43000000, 61000000, 35000000, 20000000],
-                fill: false,
-                borderColor: '#FFBE4C',
-                pointRadius: 0,
-                borderWidth: 2,
-            },
-            {
-                label: 'NCS',
-                data: [10000000, 35000000, 23000000, 65000000, 90000000, 15000000, 42000000],
-                fill: false,
-                borderColor: '#40C4AA',
-                pointRadius: 0,
-                borderWidth: 2,
-            },
-            {
-                label: 'NBC',
-                data: [43000000, 15000000, 80000000, 60000000, 35000000, 65000000, 90000000],
-                fill: false,
-                borderColor: '#DF1C41',
-                pointRadius: 0,
-                borderWidth: 2,
-            },
-        ],
+        datasets: invoicing.map((inv, index) => ({
+            label: inv.name.toUpperCase(),
+            data: 
+                index === 0 ? [65000000, 22000000, 76000000, 81000000, 56000000, 55000000, 40000000] :
+                index === 1 ? [45000000, 49000000, 60000000, 43000000, 61000000, 35000000, 20000000] :
+                index === 2 ? [10000000, 35000000, 23000000, 65000000, 90000000, 15000000, 42000000] :
+                index === 3 ? [43000000, 15000000, 80000000, 60000000, 35000000, 65000000, 90000000] :
+                []
+            ,
+            fill: false,
+            borderColor: [ '#4C72FA', '#FFBE4C', '#40C4AA', '#DF1C41' ][index],
+            pointRadius: 0,
+            borderWidth: 2,
+        }))
     };
     
     const lineOptions = {
@@ -146,7 +152,7 @@ export const Invoicing = () => {
             }
         };
         updateLineItems();
-    }, []);
+    }, [lineData]);
 
     const setCustom = () => {
         setPeriod('custom');
@@ -198,16 +204,16 @@ export const Invoicing = () => {
             <div className={styles.threeRow}>
                 <div className={styles.infoDiv} >
                     <h5>TODAY'S TRANSACTIONS</h5>
-                    <h1>1,540,965</h1>
+                    <h1>{formatNumber(invoicingData.totalDailyTransaction)}</h1>
                 </div>
                 <div className={styles.infoDiv} >
                     <h5>TOTAL AMOUNT</h5>
-                    <h1>396,235,951.23</h1>
+                    <h1>{formatNumberDec(invoicing.reduce((sum, item) => sum + item.totalAmount, 0))}</h1>
                 </div>
                 <div className={styles.infoDiv} >
                     <h5>VAT GENERATED</h5>
                     <div className={styles.vatDiv}>
-                        <h1>3,962,359.23</h1>
+                        <h1>{formatNumberDec(invoicingData.totalDailyVat)}</h1>
                         <div className={styles.percentage}>10%</div>
                     </div>
                 </div>
@@ -233,7 +239,7 @@ export const Invoicing = () => {
                 <div className={styles.pieDiv}>
                     <h5>TOP PERFORMERS</h5>
                     <div className={styles.pieChart}>
-                        <div style={{width: '250px'}}>
+                        <div style={{maxWidth: '250px'}}>
                             <Pie data={pieData} options={pieOptions} id="pieChart" />
                         </div>
                         <div>

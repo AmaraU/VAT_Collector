@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import styles from './Banking.module.css';
 import { Pie, Line } from 'react-chartjs-2';
 import { Chart as ChartJS, LineElement, ArcElement, CategoryScale, LinearScale, PointElement, Tooltip, Legend } from 'chart.js';
+import axios from "axios";
 
 ChartJS.register(LineElement, ArcElement, CategoryScale, LinearScale, PointElement, Tooltip, Legend);
 
@@ -11,19 +12,46 @@ export const Banking = () => {
     const [ pieItems, setPieItems ] = useState([]);
     const [ lineItems, setLineItems ] = useState([]);
     const [ openCustom, setOpenCustom ] = useState(false);
+    const [ bankingData, setBankingData ] = useState([]);
+    const [ banking, setBanking ] = useState([]);
+    const [ pieBanks, setPieBanks ] = useState([]);
     const popupRef = useRef(null);
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    const fetchData = async () => {
+        try {
+            const result = await axios('http://41.78.157.3/FirsCollection.API/api/reports/dashboard');
+            
+            setBankingData(result.data.result.data.summaryDetails.dashBoardReport[0]);
+            setBanking(result.data.result.data.summaryDetails.dashBoardReport[0].transactionDetails);
+            setPieBanks(result.data.result.data.summaryDetails.dashBoardReport[0].transactionDetails.sort((a, b) => b.totalVat - a.totalVat).slice(0,3));
+        
+        } catch (err) {
+            console.log(err);
+        }
+    }
 
     const formatNumber = (number) => {
         return new Intl.NumberFormat('en-US').format(number);
     };
-    
+    const formatNumberDec = (number) => {
+        return new Intl.NumberFormat('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }).format(number);
+    };
+
+
     const pieData = {
-        labels: ['First Bank', 'Eco Bank', 'GTBank'],
+        labels: pieBanks.map(item => item.name),
         datasets: [
             {
                 label: "",
-                data: [547954, 253977, 547954],
-                backgroundColor: [ '#4C72FA', '#FFBE4C', '#40C4AA'],
+                data: pieBanks.map(item => item.totalVat),
+                backgroundColor: [ '#4C72FA', '#FFBE4C', '#40C4AA' ],
                 borderWidth: 0,
             },
         ],
@@ -189,16 +217,16 @@ export const Banking = () => {
             <div className={styles.threeRow}>
                 <div className={styles.infoDiv} >
                     <h5>TODAY'S TRANSACTIONS</h5>
-                    <h1>1,040,965</h1>
+                    <h1>{formatNumber(bankingData.totalDailyTransaction)}</h1>
                 </div>
                 <div className={styles.infoDiv} >
                     <h5>TOTAL AMOUNT</h5>
-                    <h1>290,235,951.23</h1>
+                    <h1>{formatNumberDec(banking.reduce((sum, item) => sum + item.totalAmount, 0))}</h1>
                 </div>
                 <div className={styles.infoDiv} >
                     <h5>VAT GENERATED</h5>
                     <div className={styles.vatDiv}>
-                        <h1>2,902,359.23</h1>
+                        <h1>{formatNumberDec(bankingData.totalDailyVat)}</h1>
                         <div className={styles.percentage}>10%</div>
                     </div>
                 </div>

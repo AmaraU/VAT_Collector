@@ -2,8 +2,10 @@ import React, { useEffect, useRef, useState } from "react";
 import styles from './Overview.module.css';
 import { Pie, Line } from 'react-chartjs-2';
 import { Chart as ChartJS, LineElement, ArcElement, CategoryScale, LinearScale, PointElement, Tooltip, Legend } from 'chart.js';
+import axios from 'axios';
 
 ChartJS.register(LineElement, ArcElement, CategoryScale, LinearScale, PointElement, Tooltip, Legend);
+
 
 export const Overview = () => {
 
@@ -11,22 +13,55 @@ export const Overview = () => {
     const [ pieItems, setPieItems ] = useState([]);
     const [ lineItems, setLineItems ] = useState([]);
     const [ openCustom, setOpenCustom ] = useState(false);
+    const [ _data, setData ] = useState([]);
+    const [ bankingData, setBankingData ] = useState([]);
+    const [ telcosData, setTelcosData ] = useState([]);
+    const [ invoicingData, setInvoicingData ] = useState([]);
+    const [ banking, setBanking ] = useState([]);
+    const [ telcos, setTelcos ] = useState([]);
+    const [ invoicing, setInvoicing ] = useState([]);
     const popupRef = useRef(null);
+
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    const fetchData = async () => {
+        try {
+            const result = await axios('http://41.78.157.3/FirsCollection.API/api/reports/dashboard');
+            setData(result.data.result.data);
+            
+            setBankingData(result.data.result.data.summaryDetails.dashBoardReport[0]);
+            setTelcosData(result.data.result.data.summaryDetails.dashBoardReport[1]);
+            setInvoicingData(result.data.result.data.summaryDetails.dashBoardReport[2]);
+            setBanking(result.data.result.data.summaryDetails.dashBoardReport[0].transactionDetails.sort((a, b) => a.totalAmount - b.totalAmount));
+            setTelcos(result.data.result.data.summaryDetails.dashBoardReport[1].transactionDetails.sort((a, b) => a.totalAmount - b.totalAmount));
+            setInvoicing(result.data.result.data.summaryDetails.dashBoardReport[2].transactionDetails.sort((a, b) => a.totalAmount - b.totalAmount));
+
+        } catch (err) {
+            console.log(err);
+        }
+    }
 
     const formatNumber = (number) => {
         return new Intl.NumberFormat('en-US').format(number);
     };
+    const formatNumberDec = (number) => {
+        return new Intl.NumberFormat('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }).format(number);
+    };
 
-    const banking = ['First Bank', 'Eco Bank', 'Access Bank', 'GTBank', 'Zenith Bank'];
-    const telcos = ['Airtel', 'MTN', 'Glo', '9Mobile'];
-    const invoicing = ['NIRS', 'NNPC', 'NCS', 'NBC'];
+
     
     const pieData = {
-        labels: ['Banking', 'Telcos', 'Invoicing'],
+        labels: [bankingData.tenant, telcosData.tenant, invoicingData.tenant ],
         datasets: [
             {
                 label: "",
-                data: [547954, 253977, 203977],
+                data: [ bankingData.totalVat, telcosData.totalVat, invoicingData.totalVat ],
                 backgroundColor: [ '#4C72FA', '#FFBE4C', '#40C4AA'],
                 borderWidth: 0,
             },
@@ -192,16 +227,16 @@ export const Overview = () => {
             <div className={styles.threeRow}>
                 <div className={styles.infoDiv} >
                     <h5>TODAY'S TRANSACTIONS</h5>
-                    <h1>1,540,965</h1>
+                    <h1>{formatNumber(_data.transactions)}</h1>
                 </div>
                 <div className={styles.infoDiv} >
                     <h5>TOTAL AMOUNT</h5>
-                    <h1>396,235,951.23</h1>
+                    <h1>{formatNumberDec(_data.totalDaily)}</h1>
                 </div>
                 <div className={styles.infoDiv} >
                     <h5>VAT GENERATED</h5>
                     <div className={styles.vatDiv}>
-                        <h1>3,962,359.23</h1>
+                        <h1>{formatNumberDec(_data.vatDaily)}</h1>
                         <div className={styles.percentage}>10%</div>
                     </div>
                 </div>
@@ -216,7 +251,7 @@ export const Overview = () => {
                     </div>
                     <div className={styles.lineLegend}>
                         {lineItems.map((item, index) => (
-                            <div className={styles.lineLegendItem}>
+                            <div className={styles.lineLegendItem} key={index}>
                                 <div className={styles.lineLegColor} style={{backgroundColor: item.color}}></div>
                                 <p>{item.label}</p>
                             </div>
@@ -228,7 +263,7 @@ export const Overview = () => {
                     <div className={styles.pieDiv}>
                         <h5>TOP PERFORMERS</h5>
                         <div className={styles.pieChart}>
-                            <div style={{width: '230px'}}>
+                            <div style={{maxWidth: '230px'}}>
                                 <Pie data={pieData} options={pieOptions} id="pieChart" />
                             </div>
                             <div className={styles.pieLegend}>
@@ -251,22 +286,22 @@ export const Overview = () => {
                         <div className={styles.ratings}>
                             <div className={styles.list}>
                                 <h6>Banking</h6>
-                                {banking.map((bank, i) => (
-                                    <p>{bank}</p>
+                                {banking.slice(0,5).map((bank, i) => (
+                                    <p key={i}>{bank.name}</p>
                                 ))}
                             </div>
 
                             <div className={styles.list}>
                                 <h6>Telcos</h6>
-                                {telcos.map((tel, i) => (
-                                    <p>{tel}</p>
+                                {telcos.slice(0,5).map((tel, i) => (
+                                    <p key={i}>{tel.name}</p>
                                 ))}
                             </div>
 
                             <div className={styles.list}>
                                 <h6>Invoicing</h6>
-                                {invoicing.map((invo, i) => (
-                                    <p>{invo}</p>
+                                {invoicing.slice(0,5).map((invo, i) => (
+                                    <p key={i}>{invo.name}</p>
                                 ))}
                             </div>
                         </div>
