@@ -13,6 +13,8 @@ export const Overview = () => {
     const [ pieItems, setPieItems ] = useState([]);
     const [ lineItems, setLineItems ] = useState([]);
     const [ openCustom, setOpenCustom ] = useState(false);
+    const [ updateIndex, setUpdateIndex ] = useState(0);
+
     const [ _data, setData ] = useState([]);
     const [ bankingData, setBankingData ] = useState([]);
     const [ telcosData, setTelcosData ] = useState([]);
@@ -22,14 +24,36 @@ export const Overview = () => {
     const [ invoicing, setInvoicing ] = useState([]);
     const popupRef = useRef(null);
 
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    const fetchData = async () => {
+        try {
+            const result = await axios('http://41.78.157.3/FirsCollection.API/api/reports/dashboard');
+            setData(result.data.result.data);
+            
+            setBankingData(result.data.result.data.summaryDetails.dashBoardReport[0]);
+            setTelcosData(result.data.result.data.summaryDetails.dashBoardReport[1]);
+            setInvoicingData(result.data.result.data.summaryDetails.dashBoardReport[2]);
+            setBanking(result.data.result.data.summaryDetails.dashBoardReport[0].transactionDetails.sort((a, b) => a.totalAmount - b.totalAmount));
+            setTelcos(result.data.result.data.summaryDetails.dashBoardReport[1].transactionDetails.sort((a, b) => a.totalAmount - b.totalAmount));
+            setInvoicing(result.data.result.data.summaryDetails.dashBoardReport[2].transactionDetails.sort((a, b) => a.totalAmount - b.totalAmount));
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
     const updates = [
         'Someone just made a transaction',
         'Someone else just made another transaction',
         'You guessed it. Another transaction.'
     ];
     
+    
     const pieData = {
-        labels: [bankingData.tenant, telcosData.tenant, invoicingData.tenant ],
+        labels: [ bankingData.tenant.toUpperCase(), telcosData.tenant.toUpperCase(), invoicingData.tenant.toUpperCase() ],
         datasets: [
             {
                 label: "",
@@ -56,7 +80,7 @@ export const Overview = () => {
         labels: ['', '', '', '', '', '', ''],
         datasets: [
             {
-                label: 'BANKING',
+                label: bankingData.tenant.toUpperCase(),
                 data: [65000000, 22000000, 80000000, 81000000, 56000000, 55000000, 40000000],
                 fill: false,
                 borderColor: '#4C72FA',
@@ -149,11 +173,17 @@ export const Overview = () => {
             }
         };
         updateLineItems();
-    }, []);
+    }, [lineData]);
 
 
     const formatNumber = (number) => {
         return new Intl.NumberFormat('en-US').format(number);
+    };
+    const formatNumberDec = (number) => {
+        return new Intl.NumberFormat('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }).format(number);
     };
 
     const setCustom = () => {
