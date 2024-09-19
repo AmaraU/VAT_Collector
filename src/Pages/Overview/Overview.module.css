@@ -15,6 +15,35 @@
     color: #36394A;
 }
 
+.updates { 
+    display: flex;
+    justify-content: center; 
+    background: #FFFFFF;
+    padding: 12px;
+    border-radius: 8px;
+    width: 35%;
+    text-align: center;
+    overflow: hidden;
+    height: 50px;
+    position: relative;
+}
+
+.updates .slider {
+    width: 100%;
+    text-align: center;
+    position: absolute;
+    animation: slide 10s ease-in-out infinite;
+    white-space: nowrap;
+}
+@keyframes slide {
+    0% { transform: translateX(-100%); }
+    15% { transform: translateX(0); }
+    85% { transform: translateX(0); }
+    100% { transform: translateX(100%); }
+}
+
+
+
 .periods {
     display: inline-flex;
     align-items: center;

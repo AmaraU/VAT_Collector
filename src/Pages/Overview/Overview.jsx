@@ -22,39 +22,11 @@ export const Overview = () => {
     const [ invoicing, setInvoicing ] = useState([]);
     const popupRef = useRef(null);
 
-
-    useEffect(() => {
-        fetchData();
-    }, []);
-
-    const fetchData = async () => {
-        try {
-            const result = await axios('http://41.78.157.3/FirsCollection.API/api/reports/dashboard');
-            setData(result.data.result.data);
-            
-            setBankingData(result.data.result.data.summaryDetails.dashBoardReport[0]);
-            setTelcosData(result.data.result.data.summaryDetails.dashBoardReport[1]);
-            setInvoicingData(result.data.result.data.summaryDetails.dashBoardReport[2]);
-            setBanking(result.data.result.data.summaryDetails.dashBoardReport[0].transactionDetails.sort((a, b) => a.totalAmount - b.totalAmount));
-            setTelcos(result.data.result.data.summaryDetails.dashBoardReport[1].transactionDetails.sort((a, b) => a.totalAmount - b.totalAmount));
-            setInvoicing(result.data.result.data.summaryDetails.dashBoardReport[2].transactionDetails.sort((a, b) => a.totalAmount - b.totalAmount));
-
-        } catch (err) {
-            console.log(err);
-        }
-    }
-
-    const formatNumber = (number) => {
-        return new Intl.NumberFormat('en-US').format(number);
-    };
-    const formatNumberDec = (number) => {
-        return new Intl.NumberFormat('en-US', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        }).format(number);
-    };
-
-
+    const updates = [
+        'Someone just made a transaction',
+        'Someone else just made another transaction',
+        'You guessed it. Another transaction.'
+    ];
     
     const pieData = {
         labels: [bankingData.tenant, telcosData.tenant, invoicingData.tenant ],
@@ -179,6 +151,11 @@ export const Overview = () => {
         updateLineItems();
     }, []);
 
+
+    const formatNumber = (number) => {
+        return new Intl.NumberFormat('en-US').format(number);
+    };
+
     const setCustom = () => {
         setPeriod('custom');
         setOpenCustom(false);        
@@ -197,12 +174,23 @@ export const Overview = () => {
         };
     }, []);
 
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setUpdateIndex((prevIndex) => (prevIndex + 1) % updates.length);
+        }, 10000);
+        return() => clearInterval(interval);
+    }, [updates.length]);
+
 
     return (
         <div className={styles.whole}>
             
             <div className={styles.overviewHeader}>
                 <h2>Overview</h2>
+
+                <div className={styles.updates}>
+                    <div className={styles.slider}>{updates[updateIndex]}</div>
+                </div>
 
                 <div className={styles.periods}>
                     Period:
