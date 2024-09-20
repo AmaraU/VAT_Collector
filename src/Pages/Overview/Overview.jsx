@@ -31,7 +31,7 @@ export const Overview = () => {
 
     const fetchData = async () => {
         try {
-            const result = await axios('http://41.78.157.3/FirsCollection.API/api/reports/dashboard/');
+            const result = await axios('https://41.78.157.3/FirsCollection.API/api/reports/dashboard/');
             setData(result.data.result.data);
             
             setBankingData(result.data.result.data.summaryDetails.dashBoardReport[0]);
