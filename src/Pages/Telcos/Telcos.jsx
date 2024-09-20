@@ -205,7 +205,13 @@ export const Telcos = () => {
 
             <div className={styles.threeRow}>
                 <div className={styles.infoDiv} >
-                    <h5>TODAY'S TRANSACTIONS</h5>
+                    <h5>
+                        {period === 'daily' ? "TODAY'S "
+                        : period === 'weekly' ? "THIS WEEK'S "
+                        : period === 'monthly' ? "THIS MONTH'S "
+                        : ""}
+                         TRANSACTIONS
+                    </h5>
                     <h1>
                         {formatNumber(period === 'daily' ? telcosData.totalDailyTransaction
                                     : period === 'weekly' ? telcosData.totalDailyTransaction*7
