@@ -57,7 +57,7 @@ export const Overview = () => {
         datasets: [
             {
                 label: "",
-                data: [ bankingData.totalVat, telcosData.totalVat, invoicingData.totalVat ],
+                data: [ bankingData.totalDailyVat, telcosData.totalDailyVat, invoicingData.totalDailyVat ],
                 backgroundColor: [ '#4C72FA', '#FFBE4C', '#40C4AA'],
                 borderWidth: 0,
             },
@@ -66,7 +66,7 @@ export const Overview = () => {
 
     const pieOptions = {
         animation: {
-            duration: 300,
+            duration: 100,
         },
         plugins: {
             legend: {
@@ -285,7 +285,7 @@ export const Overview = () => {
                                 <Pie data={pieData} options={pieOptions} id="pieChart" />
                             </div>
                             <div className={styles.pieLegend}>
-                                {pieItems.map((item, index) => (
+                                {pieItems.sort((a, b) => a.value - b.value).map((item, index) => (
                                     <div className={styles.pieLegendItem} key={index}>
                                         <div className={styles.labelColor} style={{backgroundColor: item.color}}></div>
                                         <div>
