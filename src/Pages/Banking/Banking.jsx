@@ -223,7 +223,7 @@ export const Banking = () => {
                         : period === 'weekly' ? "THIS WEEK'S "
                         : period === 'monthly' ? "THIS MONTH'S "
                         : ""}
-                         TRANSACTIONS
+                        TRANSACTIONS
                     </h5>
                     <h1>
                         {formatNumber(period === 'daily' ? bankingData.totalDailyTransaction

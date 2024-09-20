@@ -210,7 +210,7 @@ export const Telcos = () => {
                         : period === 'weekly' ? "THIS WEEK'S "
                         : period === 'monthly' ? "THIS MONTH'S "
                         : ""}
-                         TRANSACTIONS
+                        TRANSACTIONS
                     </h5>
                     <h1>
                         {formatNumber(period === 'daily' ? telcosData.totalDailyTransaction

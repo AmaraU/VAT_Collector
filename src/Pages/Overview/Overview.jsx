@@ -252,7 +252,7 @@ export const Overview = () => {
                         : period === 'weekly' ? "THIS WEEK'S "
                         : period === 'monthly' ? "THIS MONTH'S "
                         : ""}
-                         TRANSACTIONS
+                        TRANSACTIONS
                     </h5>
                     <h1>
                         {formatNumber(period === 'daily' ? _data.transactions
