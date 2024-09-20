@@ -50,7 +50,10 @@ export const Banking = () => {
         datasets: [
             {
                 label: "",
-                data: pieBanks.map(item => item.totalVat),
+                data: period === 'daily' ? pieBanks.map(item => item.totalVat)
+                    : period === 'weekly' ? pieBanks.map(item => item.totalVat*7)
+                    : period === 'monthly' ? pieBanks.map(item => item.totalVat*30)
+                    : pieBanks.map(item => item.totalVat*30),
                 backgroundColor: [ '#4C72FA', '#FFBE4C', '#40C4AA' ],
                 borderWidth: 0,
             },
@@ -59,7 +62,7 @@ export const Banking = () => {
 
     const pieOptions = {
         animation: {
-            duration: 300,
+            duration: 100,
         },
         plugins: {
             legend: {
@@ -178,7 +181,6 @@ export const Banking = () => {
             setOpenCustom(false);
         }
     };
-
     useEffect(() => {
         document.addEventListener('click', handleClickOutside, true);
         return () => {
@@ -217,16 +219,34 @@ export const Banking = () => {
             <div className={styles.threeRow}>
                 <div className={styles.infoDiv} >
                     <h5>TODAY'S TRANSACTIONS</h5>
-                    <h1>{formatNumber(bankingData.totalDailyTransaction)}</h1>
+                    <h1>
+                        {formatNumber(period === 'daily' ? bankingData.totalDailyTransaction
+                                    : period === 'weekly' ? bankingData.totalDailyTransaction*7
+                                    : period === 'monthly' ? bankingData.totalDailyTransaction*30
+                                    : bankingData.totalDailyTransaction
+                        )}
+                    </h1>
                 </div>
                 <div className={styles.infoDiv} >
                     <h5>TOTAL AMOUNT</h5>
-                    <h1>{formatNumberDec(banking.reduce((sum, item) => sum + item.totalAmount, 0))}</h1>
+                    <h1>
+                        {formatNumberDec(period === 'daily' ? banking.reduce((sum, item) => sum + item.totalAmount, 0)
+                                    : period === 'weekly' ? banking.reduce((sum, item) => sum + item.totalAmount, 0)*7
+                                    : period === 'monthly' ? banking.reduce((sum, item) => sum + item.totalAmount, 0)*30
+                                    : banking.reduce((sum, item) => sum + item.totalAmount, 0)
+                        )}
+                    </h1>
                 </div>
                 <div className={styles.infoDiv} >
                     <h5>VAT GENERATED</h5>
                     <div className={styles.vatDiv}>
-                        <h1>{formatNumberDec(bankingData.totalDailyVat)}</h1>
+                        <h1>
+                            {formatNumberDec(period === 'daily' ? bankingData.totalDailyVat
+                                        : period === 'weekly' ? bankingData.totalDailyVat*7
+                                        : period === 'monthly' ? bankingData.totalDailyVat*30
+                                        : bankingData.totalDailyVat
+                            )}
+                        </h1>
                         <div className={styles.percentage}>10%</div>
                     </div>
                 </div>

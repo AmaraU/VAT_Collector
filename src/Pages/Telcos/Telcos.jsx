@@ -47,7 +47,10 @@ export const Telcos = () => {
         labels: pieTelcos.map(item => item.name.toUpperCase()),
         datasets: [
             {
-                data: pieTelcos.map(item => item.totalVat),
+                data: period === 'daily' ? pieTelcos.map(item => item.totalVat)
+                    : period === 'weekly' ? pieTelcos.map(item => item.totalVat*7)
+                    : period === 'monthly' ? pieTelcos.map(item => item.totalVat*30)
+                    : pieTelcos.map(item => item.totalVat*30),
                 backgroundColor: [ '#4C72FA', '#FFBE4C', '#40C4AA' ],
                 borderWidth: 0,
             },
@@ -203,16 +206,34 @@ export const Telcos = () => {
             <div className={styles.threeRow}>
                 <div className={styles.infoDiv} >
                     <h5>TODAY'S TRANSACTIONS</h5>
-                    <h1>{formatNumber(telcosData.totalDailyTransaction)}</h1>
+                    <h1>
+                        {formatNumber(period === 'daily' ? telcosData.totalDailyTransaction
+                                    : period === 'weekly' ? telcosData.totalDailyTransaction*7
+                                    : period === 'monthly' ? telcosData.totalDailyTransaction*30
+                                    : telcosData.totalDailyTransaction
+                        )}
+                    </h1>
                 </div>
                 <div className={styles.infoDiv} >
                     <h5>TOTAL AMOUNT</h5>
-                    <h1>{formatNumberDec(telcos.reduce((sum, item) => sum + item.totalAmount, 0))}</h1>
+                    <h1>
+                        {formatNumberDec(period === 'daily' ? telcos.reduce((sum, item) => sum + item.totalAmount, 0)
+                                    : period === 'weekly' ? telcos.reduce((sum, item) => sum + item.totalAmount, 0)*7
+                                    : period === 'monthly' ? telcos.reduce((sum, item) => sum + item.totalAmount, 0)*30
+                                    : telcos.reduce((sum, item) => sum + item.totalAmount, 0)
+                        )}
+                    </h1>
                 </div>
                 <div className={styles.infoDiv} >
                     <h5>VAT GENERATED</h5>
                     <div className={styles.vatDiv}>
-                        <h1>{formatNumberDec(telcosData.totalDailyVat)}</h1>
+                        <h1>
+                            {formatNumberDec(period === 'daily' ? telcosData.totalDailyVat
+                                        : period === 'weekly' ? telcosData.totalDailyVat*7
+                                        : period === 'monthly' ? telcosData.totalDailyVat*30
+                                        : telcosData.totalDailyVat
+                            )}
+                        </h1>
                         <div className={styles.percentage}>10%</div>
                     </div>
                 </div>

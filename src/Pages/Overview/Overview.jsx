@@ -57,7 +57,10 @@ export const Overview = () => {
         datasets: [
             {
                 label: "",
-                data: [ bankingData.totalDailyVat, telcosData.totalDailyVat, invoicingData.totalDailyVat ],
+                data: period === 'daily' ? [ bankingData.totalDailyVat, telcosData.totalDailyVat, invoicingData.totalDailyVat ]
+                    : period === 'weekly' ? [ bankingData.totalDailyVat*6.5, telcosData.totalDailyVat*7, invoicingData.totalDailyVat*7 ]
+                    : period === 'monthly' ? [ bankingData.totalDailyVat*30, telcosData.totalDailyVat*30, invoicingData.totalDailyVat*30 ]
+                    : [ bankingData.totalDailyVat, telcosData.totalDailyVat, invoicingData.totalDailyVat ],
                 backgroundColor: [ '#4C72FA', '#FFBE4C', '#40C4AA'],
                 borderWidth: 0,
             },
@@ -245,16 +248,34 @@ export const Overview = () => {
             <div className={styles.threeRow}>
                 <div className={styles.infoDiv} >
                     <h5>TODAY'S TRANSACTIONS</h5>
-                    <h1>{formatNumber(_data.transactions)}</h1>
+                    <h1>
+                        {formatNumber(period === 'daily' ? _data.transactions
+                                    : period === 'weekly' ? _data.transactions*7
+                                    : period === 'monthly' ? _data.transactions*30
+                                    : _data.transactions
+                        )}
+                    </h1>
                 </div>
                 <div className={styles.infoDiv} >
                     <h5>TOTAL AMOUNT</h5>
-                    <h1>{formatNumberDec(_data.totalDaily)}</h1>
+                    <h1>
+                        {formatNumber(period === 'daily' ? _data.totalDaily
+                                    : period === 'weekly' ? _data.totalDaily*7
+                                    : period === 'monthly' ? _data.totalDaily*30
+                                    : _data.totalDaily
+                        )}
+                    </h1>
                 </div>
                 <div className={styles.infoDiv} >
                     <h5>VAT GENERATED</h5>
                     <div className={styles.vatDiv}>
-                        <h1>{formatNumberDec(_data.vatDaily)}</h1>
+                        <h1>
+                            {formatNumber(period === 'daily' ? _data.vatDaily
+                                        : period === 'weekly' ? _data.vatDaily*7
+                                        : period === 'monthly' ? _data.vatDaily*30
+                                        : _data.vatDaily
+                            )}
+                        </h1>
                         <div className={styles.percentage}>10%</div>
                     </div>
                 </div>
@@ -285,7 +306,7 @@ export const Overview = () => {
                                 <Pie data={pieData} options={pieOptions} id="pieChart" />
                             </div>
                             <div className={styles.pieLegend}>
-                                {pieItems.sort((a, b) => a.value - b.value).map((item, index) => (
+                                {pieItems.sort((a, b) => b.value - a.value).map((item, index) => (
                                     <div className={styles.pieLegendItem} key={index}>
                                         <div className={styles.labelColor} style={{backgroundColor: item.color}}></div>
                                         <div>

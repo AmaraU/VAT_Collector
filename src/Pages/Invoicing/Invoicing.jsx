@@ -48,7 +48,10 @@ export const Invoicing = () => {
         labels: pieInvoicing.map(item => item.name.toUpperCase()),
         datasets: [
             {
-                data: pieInvoicing.map(item => item.totalVat),
+                data: period === 'daily' ? pieInvoicing.map(item => item.totalVat)
+                    : period === 'weekly' ? pieInvoicing.map(item => item.totalVat*7)
+                    : period === 'monthly' ? pieInvoicing.map(item => item.totalVat*30)
+                    : pieInvoicing.map(item => item.totalVat*30),
                 backgroundColor: [ '#4C72FA', '#FFBE4C', '#40C4AA' ],
                 borderWidth: 0,
             },
@@ -204,16 +207,34 @@ export const Invoicing = () => {
             <div className={styles.threeRow}>
                 <div className={styles.infoDiv} >
                     <h5>TODAY'S TRANSACTIONS</h5>
-                    <h1>{formatNumber(invoicingData.totalDailyTransaction)}</h1>
+                    <h1>
+                        {formatNumber(period === 'daily' ? invoicingData.totalDailyTransaction
+                                    : period === 'weekly' ? invoicingData.totalDailyTransaction*7
+                                    : period === 'monthly' ? invoicingData.totalDailyTransaction*30
+                                    : invoicingData.totalDailyTransaction
+                        )}
+                    </h1>
                 </div>
                 <div className={styles.infoDiv} >
                     <h5>TOTAL AMOUNT</h5>
-                    <h1>{formatNumberDec(invoicing.reduce((sum, item) => sum + item.totalAmount, 0))}</h1>
+                    <h1>
+                        {formatNumberDec(period === 'daily' ? invoicing.reduce((sum, item) => sum + item.totalAmount, 0)
+                                    : period === 'weekly' ? invoicing.reduce((sum, item) => sum + item.totalAmount, 0)*7
+                                    : period === 'monthly' ? invoicing.reduce((sum, item) => sum + item.totalAmount, 0)*30
+                                    : invoicing.reduce((sum, item) => sum + item.totalAmount, 0)
+                        )}
+                    </h1>
                 </div>
                 <div className={styles.infoDiv} >
                     <h5>VAT GENERATED</h5>
                     <div className={styles.vatDiv}>
-                        <h1>{formatNumberDec(invoicingData.totalDailyVat)}</h1>
+                        <h1>
+                            {formatNumberDec(period === 'daily' ? invoicingData.totalDailyVat
+                                        : period === 'weekly' ? invoicingData.totalDailyVat*7
+                                        : period === 'monthly' ? invoicingData.totalDailyVat*30
+                                        : invoicingData.totalDailyVat
+                            )}
+                        </h1>
                         <div className={styles.percentage}>10%</div>
                     </div>
                 </div>
