@@ -24,7 +24,7 @@ export const Invoicing = () => {
 
     const fetchData = async () => {
         try {
-            const result = await axios('http://41.78.157.3/FirsCollection.API/api/reports/dashboard');
+            const result = await axios('https://connectedge.covenantmfb.com/FirsCollection.AP/api/reports/dashboard/');
             
             setInvoicingData(result.data.result.data.summaryDetails.dashBoardReport[2]);
             setInvoicing(result.data.result.data.summaryDetails.dashBoardReport[2].transactionDetails.sort((a, b) => b.totalVat - a.totalVat).slice(0,3));

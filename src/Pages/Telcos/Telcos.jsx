@@ -24,7 +24,7 @@ export const Telcos = () => {
 
     const fetchData = async () => {
         try {
-            const result = await axios('http://41.78.157.3/FirsCollection.API/api/reports/dashboard');
+            const result = await axios('https://connectedge.covenantmfb.com/FirsCollection.AP/api/reports/dashboard/');
             
             setTelcosData(result.data.result.data.summaryDetails.dashBoardReport[1]);
             setTelcos(result.data.result.data.summaryDetails.dashBoardReport[1].transactionDetails.sort((a, b) => b.totalVat - a.totalVat));
