@@ -1,12 +1,26 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { getImageUrl } from "../../../utils";
 import styles from './Header.module.css';
 import { useNavigate } from "react-router-dom";
 
 export const Header = () => {
 
+    const [ opened, setOpened ] = useState(false);
+    const signpop = useRef(null)
     const navigate = useNavigate();
     const currentPath = window.location.pathname;
+
+    const handleClickOutside = (event) => {
+        if (signpop.current && !signpop.current.contains(event.target)) {
+            setOpened(false);
+        }
+    };
+    useEffect(() => {
+        document.addEventListener('click', handleClickOutside, true);
+        return () => {
+            document.removeEventListener('click', handleClickOutside, true);
+        };
+    }, []);
 
     return (
         <div className={styles.header}>
@@ -24,7 +38,10 @@ export const Header = () => {
             <div className={styles.buttons}>
                 <button><img src={getImageUrl('filter.png')} /></button>
                 <button><img src={getImageUrl('bell.png')} /></button>
-                <div>UB</div>
+                <button className={styles.profile} onClick={()=>setOpened(!opened)}>UB</button>
+                <div className={`${styles.closed} ${opened && styles.signOut}`} ref={signpop}>
+                    <a href="/signin">Sign out</a>
+                </div>
             </div>
         </div>
     )

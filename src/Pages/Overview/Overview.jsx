@@ -27,7 +27,7 @@ export const Overview = () => {
 
     useEffect(() => {
         fetchData();
-    }, []);
+    });
 
     const fetchData = async () => {
         try {

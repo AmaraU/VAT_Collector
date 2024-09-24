@@ -15,11 +15,11 @@ export const SignIn = () => {
                 <h3>Sign in to your account</h3>
 
                 <label htmlFor="email">Email</label>
-                <input className={styles.emailInput} type="email" name="email" placeholder="xyz@samplemail.com" autoComplete="off" />
+                <input className={styles.emailInput} type="email" name="email" placeholder="admin@firs.gov.ng" autoComplete="off" />
                 
                 <label htmlFor="password">Password</label>
                 <div className={styles.passwordDiv}>
-                    <input type={showPassword ? 'text' : 'password'} name="password" autoComplete="off" />
+                    <input type={showPassword ? 'text' : 'password'} name="password" autoComplete="off" placeholder="**********" />
                     <button type="button" onClick={()=> setShowPassword(!showPassword)}><img src={getImageUrl('showPass.png')} /></button>
                 </div>
                 <a href="">Forgot Password</a>
