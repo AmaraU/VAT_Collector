@@ -22,12 +22,17 @@ export const Overview = () => {
     const [ banking, setBanking ] = useState([]);
     const [ telcos, setTelcos ] = useState([]);
     const [ invoicing, setInvoicing ] = useState([]);
+
+    const [ groupedBanks, setGroupedBanks ] = useState([]);
+    const [ groupedTelcos, setGroupedTelcos ] = useState([]);
+    const [ groupedInvoicing, setGroupedInvoicing ] = useState([]);
     const popupRef = useRef(null);
 
 
     useEffect(() => {
         fetchData();
-    }, []);
+        // console.log('running');
+    }, [_data]);
 
     const fetchData = async () => {
         try {
@@ -42,6 +47,35 @@ export const Overview = () => {
         }
     }
 
+    useEffect(() => {
+        setGroupedBanks(groupByTenantNameAndCalculateTotal(bankingData));
+        setGroupedTelcos(groupByTenantNameAndCalculateTotal(telcosData));
+        setGroupedInvoicing(groupByTenantNameAndCalculateTotal(invoicingData));
+    }, [_data]);
+
+    const groupByTenantName = (items) => {
+        return items.reduce((acc, item) => {
+        const key = item.tenantName;
+        if (!acc[key]) {
+            acc[key] = [];
+        }
+        acc[key].push(item);
+        return acc;
+        }, {});
+    };
+
+    const groupByTenantNameAndCalculateTotal = (items) => {
+        return items.reduce((acc, item) => {
+          const key = item.tenantName;
+          if (!acc[key]) {
+            acc[key] = { totalValue: 0, items: [] };
+          }
+          acc[key].totalValue += item.vat;
+          acc[key].items.push(item);
+          return acc;
+        }, {});
+      };
+
     const updates = [
         'Someone just made a transaction',
         'Someone else just made another transaction',
@@ -55,9 +89,9 @@ export const Overview = () => {
             {
                 label: "",
                 data: period === 'daily' ? [ bankingData.reduce((sum, item) => sum + item.vat, 0), telcosData.reduce((sum, item) => sum + item.vat, 0), invoicingData.reduce((sum, item) => sum + item.vat, 0) ]
-                    : period === 'weekly' ? [ bankingData.totalDailyVat*6.5, telcosData.totalDailyVat*7, invoicingData.totalDailyVat*7 ]
-                    : period === 'monthly' ? [ bankingData.totalDailyVat*30, telcosData.totalDailyVat*30, invoicingData.totalDailyVat*30 ]
-                    : [ bankingData.totalDailyVat, telcosData.totalDailyVat, invoicingData.totalDailyVat ],
+                    : period === 'weekly' ? [ bankingData.reduce((sum, item) => sum + item.vat, 0)*6.5, telcosData.reduce((sum, item) => sum + item.vat, 0)*7, invoicingData.reduce((sum, item) => sum + item.vat, 0)*7 ]
+                    : period === 'monthly' ? [ bankingData.reduce((sum, item) => sum + item.vat, 0)*30, telcosData.reduce((sum, item) => sum + item.vat, 0)*31, invoicingData.reduce((sum, item) => sum + item.vat, 0)*30 ]
+                    : [ bankingData.reduce((sum, item) => sum + item.vat, 0), telcosData.reduce((sum, item) => sum + item.vat, 0), invoicingData.reduce((sum, item) => sum + item.vat, 0) ],
                 backgroundColor: [ '#4C72FA', '#FFBE4C', '#40C4AA'],
                 borderWidth: 0,
             },
@@ -262,7 +296,7 @@ export const Overview = () => {
                 <div className={styles.infoDiv} >
                     <h5>TOTAL AMOUNT</h5>
                     <h1>
-                        {formatNumber(period === 'daily' ? _data.reduce((sum, item) => sum + item.amount, 0)
+                        {formatNumberDec(period === 'daily' ? _data.reduce((sum, item) => sum + item.amount, 0)
                                     : period === 'weekly' ? _data.reduce((sum, item) => sum + item.amount, 0)*7
                                     : period === 'monthly' ? _data.reduce((sum, item) => sum + item.amount, 0)*30
                                     : _data.reduce((sum, item) => sum + item.amount, 0)
@@ -273,7 +307,7 @@ export const Overview = () => {
                     <h5>VAT GENERATED</h5>
                     <div className={styles.vatDiv}>
                         <h1>
-                            {formatNumber(period === 'daily' ? _data.reduce((sum, item) => sum + item.vat, 0)
+                            {formatNumberDec(period === 'daily' ? _data.reduce((sum, item) => sum + item.vat, 0)
                                         : period === 'weekly' ? _data.reduce((sum, item) => sum + item.vat, 0)*7
                                         : period === 'monthly' ? _data.reduce((sum, item) => sum + item.vat, 0)*30
                                         : _data.reduce((sum, item) => sum + item.vat, 0)
@@ -314,7 +348,7 @@ export const Overview = () => {
                                         <div className={styles.labelColor} style={{backgroundColor: item.color}}></div>
                                         <div>
                                             <p>{item.label}</p>
-                                            <h6>{formatNumber(item.value)}</h6>
+                                            <h6>{formatNumberDec(item.value)}</h6>
                                         </div>
                                     </div>
                                 ))}
@@ -328,22 +362,22 @@ export const Overview = () => {
                         <div className={styles.ratings}>
                             <div className={styles.list}>
                                 <h6>Banking</h6>
-                                {banking.slice(0,5).map((bank, i) => (
-                                    <p key={i}>{bank.name}</p>
+                                {Object.entries(groupedBanks).sort(([,a], [,b]) => b.totalValue - a.totalValue).slice(0,2).map(([bank]) => (
+                                    <p>{bank}</p>
                                 ))}
                             </div>
 
                             <div className={styles.list}>
                                 <h6>Telcos</h6>
-                                {telcos.slice(0,5).map((tel, i) => (
-                                    <p key={i}>{tel.name}</p>
+                                {Object.entries(groupedTelcos).sort(([,a], [,b]) => b.totalValue - a.totalValue).slice(0,5).map(([telco]) => (
+                                    <p>{telco}</p>
                                 ))}
                             </div>
 
                             <div className={styles.list}>
                                 <h6>Invoicing</h6>
-                                {invoicing.slice(0,5).map((invo, i) => (
-                                    <p key={i}>{invo.name}</p>
+                                {Object.entries(groupedInvoicing).sort(([,a], [,b]) => b.totalValue - a.totalValue).slice(0,5).map(([inv]) => (
+                                    <p>{inv}</p>
                                 ))}
                             </div>
                         </div>
