@@ -27,19 +27,16 @@ export const Overview = () => {
 
     useEffect(() => {
         fetchData();
-    });
+    }, []);
 
     const fetchData = async () => {
         try {
-            const result = await axios('https://connectedge.covenantmfb.com/FirsCollection.AP/api/reports/dashboard/');
+            const result = await axios('https://connectedge.covenantmfb.com/FirsCollection.AP/api/reports/dashboard-vat-collections/');
             setData(result.data.result.data);
-            
-            setBankingData(result.data.result.data.summaryDetails.dashBoardReport[0]);
-            setTelcosData(result.data.result.data.summaryDetails.dashBoardReport[1]);
-            setInvoicingData(result.data.result.data.summaryDetails.dashBoardReport[2]);
-            setBanking(result.data.result.data.summaryDetails.dashBoardReport[0].transactionDetails.sort((a, b) => a.totalAmount - b.totalAmount));
-            setTelcos(result.data.result.data.summaryDetails.dashBoardReport[1].transactionDetails.sort((a, b) => a.totalAmount - b.totalAmount));
-            setInvoicing(result.data.result.data.summaryDetails.dashBoardReport[2].transactionDetails.sort((a, b) => a.totalAmount - b.totalAmount));
+
+            setBankingData(result.data.result.data.filter(e => e.tenant.toLowerCase() === "banking"));
+            setInvoicingData(result.data.result.data.filter(e => e.tenant.toLowerCase() === "invoicing"));
+            setTelcosData(result.data.result.data.filter(e => e.tenant.toLowerCase() === "telcos"));
         } catch (err) {
             console.log(err);
         }
@@ -57,7 +54,7 @@ export const Overview = () => {
         datasets: [
             {
                 label: "",
-                data: period === 'daily' ? [ bankingData.totalDailyVat, telcosData.totalDailyVat, invoicingData.totalDailyVat ]
+                data: period === 'daily' ? [ bankingData.reduce((sum, item) => sum + item.vat, 0), telcosData.reduce((sum, item) => sum + item.vat, 0), invoicingData.reduce((sum, item) => sum + item.vat, 0) ]
                     : period === 'weekly' ? [ bankingData.totalDailyVat*6.5, telcosData.totalDailyVat*7, invoicingData.totalDailyVat*7 ]
                     : period === 'monthly' ? [ bankingData.totalDailyVat*30, telcosData.totalDailyVat*30, invoicingData.totalDailyVat*30 ]
                     : [ bankingData.totalDailyVat, telcosData.totalDailyVat, invoicingData.totalDailyVat ],
@@ -255,20 +252,20 @@ export const Overview = () => {
                         TRANSACTIONS
                     </h5>
                     <h1>
-                        {formatNumber(period === 'daily' ? _data.transactions
-                                    : period === 'weekly' ? _data.transactions*7
-                                    : period === 'monthly' ? _data.transactions*30
-                                    : _data.transactions
+                        {formatNumber(period === 'daily' ? _data.length
+                                    : period === 'weekly' ? _data.length*7
+                                    : period === 'monthly' ? _data.length*30
+                                    : _data.length
                         )}
                     </h1>
                 </div>
                 <div className={styles.infoDiv} >
                     <h5>TOTAL AMOUNT</h5>
                     <h1>
-                        {formatNumber(period === 'daily' ? _data.totalDaily
-                                    : period === 'weekly' ? _data.totalDaily*7
-                                    : period === 'monthly' ? _data.totalDaily*30
-                                    : _data.totalDaily
+                        {formatNumber(period === 'daily' ? _data.reduce((sum, item) => sum + item.amount, 0)
+                                    : period === 'weekly' ? _data.reduce((sum, item) => sum + item.amount, 0)*7
+                                    : period === 'monthly' ? _data.reduce((sum, item) => sum + item.amount, 0)*30
+                                    : _data.reduce((sum, item) => sum + item.amount, 0)
                         )}
                     </h1>
                 </div>
@@ -276,10 +273,10 @@ export const Overview = () => {
                     <h5>VAT GENERATED</h5>
                     <div className={styles.vatDiv}>
                         <h1>
-                            {formatNumber(period === 'daily' ? _data.vatDaily
-                                        : period === 'weekly' ? _data.vatDaily*7
-                                        : period === 'monthly' ? _data.vatDaily*30
-                                        : _data.vatDaily
+                            {formatNumber(period === 'daily' ? _data.reduce((sum, item) => sum + item.vat, 0)
+                                        : period === 'weekly' ? _data.reduce((sum, item) => sum + item.vat, 0)*7
+                                        : period === 'monthly' ? _data.reduce((sum, item) => sum + item.vat, 0)*30
+                                        : _data.reduce((sum, item) => sum + item.vat, 0)
                             )}
                         </h1>
                         <div className={styles.percentage}>10%</div>

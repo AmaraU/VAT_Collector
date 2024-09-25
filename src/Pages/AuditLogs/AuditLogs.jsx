@@ -1,185 +1,31 @@
 import React, { useEffect, useRef, useState } from "react";
 import styles from './AuditLogs.module.css';
 import Pagination from "../../Components/Pagination/Pagination";
+import { format } from 'date-fns';
+import axios from 'axios';
+
 
 export const AuditLogs = () => {
 
+    const [ logs, setLogs ] = useState([]);
     const [ period, setPeriod ] = useState('daily');
     const [ currentPage, setCurrentPage ] = useState(1);
     const [ openCustom, setOpenCustom ] = useState(false);
     const popupRef = useRef(null);
 
+    useEffect(() => {
+        fetchLogs();
+    });
 
-    const logs = [
-        {
-            sn: 1,
-            user: 'GTBank',
-            type: 'Banking',
-            amount: 34000,
-            date: '03-09-2024',
-            time: '12:32 pm'
-        },
-        {
-            sn: 2,
-            user: 'Glo',
-            type: 'Telco',
-            amount: 19800,
-            date: '03-09-2024',
-            time: '12:32 pm'
-        },
-        {
-            sn: 3,
-            user: 'Access Bank',
-            type: 'Banking',
-            amount: 12000,
-            date: '03-09-2024',
-            time: '12:32 pm'
-        },
-        {
-            sn: 4,
-            user: 'First Bank',
-            type: 'Banking',
-            amount: 15400,
-            date: '03-09-2024',
-            time: '12:32 pm'
-        },
-        {
-            sn: 5,
-            user: 'Airtel',
-            type: 'Telco',
-            amount: 24985,
-            date: '03-09-2024',
-            time: '12:32 pm'
-        },
-        {
-            sn: 6,
-            user: 'NNPC',
-            type: 'Invoicing',
-            amount: 40000,
-            date: '03-09-2024',
-            time: '12:32 pm'
-        },
-        {
-            sn: 7,
-            user: 'GTBank',
-            type: 'Banking',
-            amount: 12020,
-            date: '03-09-2024',
-            time: '12:32 pm'
-        },
-        {
-            sn: 8,
-            user: 'Mobile',
-            type: 'Telco',
-            amount: 19000,
-            date: '03-09-2024',
-            time: '12:32 pm'
-        },
-        {
-            sn: 6,
-            user: 'NNPC',
-            type: 'Invoicing',
-            amount: 40000,
-            date: '03-09-2024',
-            time: '12:32 pm'
-        },
-        {
-            sn: 7,
-            user: 'GTBank',
-            type: 'Banking',
-            amount: 12020,
-            date: '03-09-2024',
-            time: '12:32 pm'
-        },
-        {
-            sn: 8,
-            user: 'Mobile',
-            type: 'Telco',
-            amount: 19000,
-            date: '03-09-2024',
-            time: '12:32 pm'
-        },
-        {
-            sn: 9,
-            user: 'GTBank',
-            type: 'Banking',
-            amount: 3400,
-            date: '03-09-2024',
-            time: '12:32 pm'
-        },
-        {
-            sn: 10,
-            user: 'GTBank',
-            type: 'Banking',
-            amount: 3400,
-            date: '03-09-2024',
-            time: '12:32 pm'
-        },
-        {
-            sn: 11,
-            user: 'GTBank',
-            type: 'Banking',
-            amount: 3400,
-            date: '03-09-2024',
-            time: '12:32 pm'
-        },
-        {
-            sn: 12,
-            user: 'GTBank',
-            type: 'Banking',
-            amount: 3400,
-            date: '03-09-2024',
-            time: '12:32 pm'
-        },
-        {
-            sn: 13,
-            user: 'GTBank',
-            type: 'Banking',
-            amount: 3400,
-            date: '03-09-2024',
-            time: '12:32 pm'
-        },
-        {
-            sn: 14,
-            user: 'Airtel',
-            type: 'Telco',
-            amount: 24985,
-            date: '03-09-2024',
-            time: '12:32 pm'
-        },
-        {
-            sn: 15,
-            user: 'NNPC',
-            type: 'Invoicing',
-            amount: 40000,
-            date: '03-09-2024',
-            time: '12:32 pm'
-        },
-        {
-            sn: 16,
-            user: 'GTBank',
-            type: 'Banking',
-            amount: 12020,
-            date: '03-09-2024',
-            time: '12:32 pm'
-        },
-        {
-            sn: 17,
-            user: 'Mobile',
-            type: 'Telco',
-            amount: 19000,
-            date: '03-09-2024',
-            time: '12:32 pm'
-        },
-        {
-            sn: 18,
-            user: 'NNPC',
-            type: 'Invoicing',
-            amount: 40000,
-            date: '03-09-2024',
-            time: '12:32 pm'
+    const fetchLogs = async () => {
+        try {
+            const result = await axios('https://connectedge.covenantmfb.com/FirsCollection.AP/api/reports/dashboard-vat-collections/');
+            setLogs(result.data.result.data);
+        } catch (err) {
+            console.log(err);
         }
-    ]
+    }
+
 
     const itemsPerPage = 10;
     const indexOfLastItem = currentPage * itemsPerPage;
@@ -254,12 +100,12 @@ export const AuditLogs = () => {
                     <tbody>
                         {currentLogs.map((log, index) => (
                             <tr key={index}>
-                                <td>{log.sn < 10 ? `0` : ``}{log.sn}</td>
-                                <td>{log.user}</td>
-                                <td>{log.type}</td>
+                                <td>{index+1 < 10 ? `0` : ``}{index+1}</td>
+                                <td>{log.tenantName}</td>
+                                <td>{log.tenant}</td>
                                 <td>{formatNumber(log.amount)}</td>
-                                <td>{log.date}</td>
-                                <td>{log.time}</td>
+                                <td>{format(new Date(log.transactionDate), 'dd-MM-yyyy')}</td>
+                                <td>{format(new Date(log.transactionDate), 'hh:mm a')}</td>
                             </tr>
                         ))}
                     </tbody>

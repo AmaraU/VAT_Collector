@@ -2,170 +2,37 @@ import React, { useEffect, useRef, useState } from "react";
 import styles from './Reports.module.css';
 import Pagination from "../../Components/Pagination/Pagination";
 import { getImageUrl } from "../../../utils";
+import axios from 'axios';
+
 
 export const Reports = () => {
 
+    const [ reports, setReports ] = useState([]);
     const [ period, setPeriod ] = useState('daily');
     const [ category, setCategory ] = useState('');
     const [ currentPage, setCurrentPage ] = useState(1);
     const [ openCustom, setOpenCustom ] = useState(false);
     const popupRef = useRef(null);
 
+    useEffect(() => {
+        fetchData();
+    });
 
-    const reports = [
-        {
-            sn: 1,
-            user: 'GTBank',
-            type: 'Banking',
-            amount: 34000,
-            period: 'Daily'
-        },
-        {
-            sn: 2,
-            user: 'Glo',
-            type: 'Telco',
-            amount: 19800,
-            period: 'Daily'
-        },
-        {
-            sn: 3,
-            user: 'Access Bank',
-            type: 'Banking',
-            amount: 12000,
-            period: 'Monthly'
-        },
-        {
-            sn: 4,
-            user: 'First Bank',
-            type: 'Banking',
-            amount: 15400,
-            period: 'Weekly'
-        },
-        {
-            sn: 5,
-            user: 'Airtel',
-            type: 'Telco',
-            amount: 24985,
-            period: 'Daily'
-        },
-        {
-            sn: 6,
-            user: 'NNPC',
-            type: 'Invoicing',
-            amount: 40000,
-            period: 'Weekly'
-        },
-        {
-            sn: 7,
-            user: 'GTBank',
-            type: 'Banking',
-            amount: 12020,
-            period: 'Monthly'
-        },
-        {
-            sn: 8,
-            user: 'Mobile',
-            type: 'Telco',
-            amount: 19000,
-            period: 'Monthly'
-        },
-        {
-            sn: 6,
-            user: 'NNPC',
-            type: 'Invoicing',
-            amount: 40000,
-            period: 'Daily'
-        },
-        {
-            sn: 7,
-            user: 'GTBank',
-            type: 'Banking',
-            amount: 12020,
-            period: 'Daily'
-        },
-        {
-            sn: 8,
-            user: 'Mobile',
-            type: 'Telco',
-            amount: 19000,
-            period: 'Weekly'
-        },
-        {
-            sn: 9,
-            user: 'GTBank',
-            type: 'Banking',
-            amount: 3400,
-            period: 'Daily'
-        },
-        {
-            sn: 10,
-            user: 'GTBank',
-            type: 'Banking',
-            amount: 3400,
-            period: 'Weekly'
-        },
-        {
-            sn: 11,
-            user: 'GTBank',
-            type: 'Banking',
-            amount: 3400,
-            period: 'Monthly'
-        },
-        {
-            sn: 12,
-            user: 'GTBank',
-            type: 'Banking',
-            amount: 3400,
-            period: 'Daily'
-        },
-        {
-            sn: 13,
-            user: 'GTBank',
-            type: 'Banking',
-            amount: 3400,
-            period: 'Weekly'
-        },
-        {
-            sn: 14,
-            user: 'Airtel',
-            type: 'Telco',
-            amount: 24985,
-            period: 'Monthly'
-        },
-        {
-            sn: 15,
-            user: 'NNPC',
-            type: 'Invoicing',
-            amount: 40000,
-            period: 'Daily'
-        },
-        {
-            sn: 16,
-            user: 'GTBank',
-            type: 'Banking',
-            amount: 12020,
-            period: 'Monthly'
-        },
-        {
-            sn: 17,
-            user: 'Mobile',
-            type: 'Telco',
-            amount: 19000,
-            period: 'Weekly'
-        },
-        {
-            sn: 18,
-            user: 'NNPC',
-            type: 'Invoicing',
-            amount: 40000,
-            period: 'Daily'
+    const fetchData = async () => {
+        try {
+            const result = await axios('https://connectedge.covenantmfb.com/FirsCollection.AP/api/reports/dashboard-vat-collections/');
+            setReports(result.data.result.data);
+            console.log(result.data.result.data);
+        } catch (err) {
+            console.log(err);
         }
-    ]
+    }
+
 
     const filteredReports = reports.filter(report => {
         return (
-            (category === "" || report.type.toLowerCase() === category) &&
-            (period === "" || report.period.toLowerCase() === period)
+            (category === "" || report.tenant.toLowerCase() === category) 
+            // (period === "" || report.period.toLowerCase() === period)
         )
     })
 
@@ -218,7 +85,7 @@ export const Reports = () => {
                         Category:
                         <button onClick={()=>setCategory('')} className={category === '' ? styles.active : ''}>All</button>
                         <button onClick={()=>setCategory('banking')} className={category === 'banking' ? styles.active : ''}>Banking</button>
-                        <button onClick={()=>setCategory('telco')} className={category === 'telco' ? styles.active : ''}>Telco</button>
+                        <button onClick={()=>setCategory('telcos')} className={category === 'telcos' ? styles.active : ''}>Telco</button>
                         <button onClick={()=>setCategory('invoicing')} className={category === 'invoicing' ? styles.active : ''}>Invoicing</button>
                     </div>
 
@@ -251,13 +118,13 @@ export const Reports = () => {
                     </thead>
 
                     <tbody>
-                        {currentReports.map((log, index) => (
+                        {currentReports.map((rep, index) => (
                             <tr key={index}>
-                                <td>{log.sn < 10 ? `0` : ``}{log.sn}</td>
-                                <td>{log.user}</td>
-                                <td>{log.type}</td>
-                                <td>{formatNumber(log.amount)}</td>
-                                <td>{log.period}</td>
+                                <td>{index+1 < 10 ? `0` : ``}{index+1}</td>
+                                <td>{rep.tenantName}</td>
+                                <td>{rep.tenant}</td>
+                                <td>{formatNumber(rep.amount)}</td>
+                                <td>{rep.period}</td>
                             </tr>
                         ))}
                     </tbody>
