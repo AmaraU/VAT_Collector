@@ -13,7 +13,7 @@ export const Banking = () => {
     const [ lineItems, setLineItems ] = useState([]);
     const [ openCustom, setOpenCustom ] = useState(false);
     const [ bankingData, setBankingData ] = useState([]);
-    const [ banking, setBanking ] = useState([]);
+    const [ groupedBanks, setGroupedBanks ] = useState([]);
     const [ pieBanks, setPieBanks ] = useState([]);
     const popupRef = useRef(null);
 
@@ -23,16 +23,31 @@ export const Banking = () => {
 
     const fetchData = async () => {
         try {
-            const result = await axios('https://connectedge.covenantmfb.com/FirsCollection.AP/api/reports/dashboard/');
-            
-            setBankingData(result.data.result.data.summaryDetails.dashBoardReport[0]);
-            setBanking(result.data.result.data.summaryDetails.dashBoardReport[0].transactionDetails);
-            setPieBanks(result.data.result.data.summaryDetails.dashBoardReport[0].transactionDetails.sort((a, b) => b.totalVat - a.totalVat).slice(0,3));
-        
+            const result = await axios('https://connectedge.covenantmfb.com/FirsCollection.AP/api/reports/dashboard-vat-collections/');
+            setBankingData(result.data.result.data.filter(e => e.tenant.toLowerCase() === "banking"));
         } catch (err) {
             console.log(err);
         }
     }
+
+    useEffect(() => {
+        setGroupedBanks(groupByTenantNameAndCalculateTotal(bankingData));
+        setPieBanks(Object.entries(groupByTenantNameAndCalculateTotal(bankingData)).sort(
+            ([,a], [,b]) => b.totalValue - a.totalValue
+        ).slice(0,3));
+    }, [bankingData]);
+
+    const groupByTenantNameAndCalculateTotal = (items) => {
+        return items.reduce((acc, item) => {
+          const key = item.tenantName;
+          if (!acc[key]) {
+            acc[key] = { totalValue: 0, items: [] };
+          }
+          acc[key].totalValue += item.vat;
+          acc[key].items.push(item);
+          return acc;
+        }, {});
+    };
 
     const formatNumber = (number) => {
         return new Intl.NumberFormat('en-US').format(number);
@@ -43,17 +58,22 @@ export const Banking = () => {
             maximumFractionDigits: 2
         }).format(number);
     };
+    const formatNumber2Dec = (number) => {
+        return number % 1 === 0
+          ? new Intl.NumberFormat('en-US').format(number)
+          : new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(number);
+    };
 
 
     const pieData = {
-        labels: pieBanks.map(item => item.name),
+        labels: pieBanks.map(([category]) => category),
         datasets: [
             {
                 label: "",
-                data: period === 'daily' ? pieBanks.map(item => item.totalVat)
-                    : period === 'weekly' ? pieBanks.map(item => item.totalVat*7)
-                    : period === 'monthly' ? pieBanks.map(item => item.totalVat*30)
-                    : pieBanks.map(item => item.totalVat*30),
+                data: period === 'daily' ? pieBanks.map(([, {totalValue}]) => totalValue)
+                    : period === 'weekly' ? pieBanks.map(([, {totalValue}]) => totalValue*7)
+                    : period === 'monthly' ? pieBanks.map(([, {totalValue}]) => totalValue*30)
+                    : pieBanks.map(([, {totalValue}]) => totalValue),
                 backgroundColor: [ '#4C72FA', '#FFBE4C', '#40C4AA' ],
                 borderWidth: 0,
             },
@@ -226,20 +246,20 @@ export const Banking = () => {
                         TRANSACTIONS
                     </h5>
                     <h1>
-                        {formatNumber(period === 'daily' ? bankingData.totalDailyTransaction
-                                    : period === 'weekly' ? bankingData.totalDailyTransaction*7
-                                    : period === 'monthly' ? bankingData.totalDailyTransaction*30
-                                    : bankingData.totalDailyTransaction
+                        {formatNumber(period === 'daily' ? bankingData.length
+                                    : period === 'weekly' ? bankingData.length*7
+                                    : period === 'monthly' ? bankingData.length*30
+                                    : bankingData.length
                         )}
                     </h1>
                 </div>
                 <div className={styles.infoDiv} >
                     <h5>TOTAL AMOUNT</h5>
                     <h1>
-                        {formatNumberDec(period === 'daily' ? banking.reduce((sum, item) => sum + item.totalAmount, 0)
-                                    : period === 'weekly' ? banking.reduce((sum, item) => sum + item.totalAmount, 0)*7
-                                    : period === 'monthly' ? banking.reduce((sum, item) => sum + item.totalAmount, 0)*30
-                                    : banking.reduce((sum, item) => sum + item.totalAmount, 0)
+                        {formatNumberDec(period === 'daily' ? bankingData.reduce((sum, item) => sum + item.amount, 0)
+                                    : period === 'weekly' ? bankingData.reduce((sum, item) => sum + item.amount, 0)*7
+                                    : period === 'monthly' ? bankingData.reduce((sum, item) => sum + item.amount, 0)*30
+                                    : bankingData.reduce((sum, item) => sum + item.amount, 0)
                         )}
                     </h1>
                 </div>
@@ -247,9 +267,9 @@ export const Banking = () => {
                     <h5>VAT GENERATED</h5>
                     <div className={styles.vatDiv}>
                         <h1>
-                            {formatNumberDec(period === 'daily' ? bankingData.totalDailyVat
-                                        : period === 'weekly' ? bankingData.totalDailyVat*7
-                                        : period === 'monthly' ? bankingData.totalDailyVat*30
+                            {formatNumberDec(period === 'daily' ? bankingData.reduce((sum, item) => sum + item.vat, 0)
+                                        : period === 'weekly' ? bankingData.reduce((sum, item) => sum + item.vat, 0)*7
+                                        : period === 'monthly' ? bankingData.reduce((sum, item) => sum + item.vat, 0)*30
                                         : bankingData.totalDailyVat
                             )}
                         </h1>
@@ -287,7 +307,7 @@ export const Banking = () => {
                                     <div className={styles.labelColor} style={{backgroundColor: item.color}}></div>
                                     <div>
                                         <p>{item.label}</p>
-                                        <h5>{formatNumber(item.value)}</h5>
+                                        <h5>{formatNumber2Dec(item.value)}</h5>
                                     </div>
                                 </div>
                             ))}

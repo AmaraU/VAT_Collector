@@ -199,7 +199,8 @@
     align-items: center;
     justify-content: space-between;
     gap: 24px;
-    height: 200px;
+    height: 220px;
+    padding-bottom: 0;
 }
 
 .pieLegend {

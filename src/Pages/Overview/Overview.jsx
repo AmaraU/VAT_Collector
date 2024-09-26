@@ -19,10 +19,6 @@ export const Overview = () => {
     const [ bankingData, setBankingData ] = useState([]);
     const [ telcosData, setTelcosData ] = useState([]);
     const [ invoicingData, setInvoicingData ] = useState([]);
-    const [ banking, setBanking ] = useState([]);
-    const [ telcos, setTelcos ] = useState([]);
-    const [ invoicing, setInvoicing ] = useState([]);
-
     const [ groupedBanks, setGroupedBanks ] = useState([]);
     const [ groupedTelcos, setGroupedTelcos ] = useState([]);
     const [ groupedInvoicing, setGroupedInvoicing ] = useState([]);
@@ -74,7 +70,7 @@ export const Overview = () => {
           acc[key].items.push(item);
           return acc;
         }, {});
-      };
+    };
 
     const updates = [
         'Someone just made a transaction',
@@ -219,6 +215,11 @@ export const Overview = () => {
             maximumFractionDigits: 2
         }).format(number);
     };
+    const formatNumber2Dec = (number) => {
+        return number % 1 === 0
+          ? new Intl.NumberFormat('en-US').format(number)
+          : new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(number);
+    };
 
     const setCustom = () => {
         setPeriod('custom');
@@ -348,7 +349,7 @@ export const Overview = () => {
                                         <div className={styles.labelColor} style={{backgroundColor: item.color}}></div>
                                         <div>
                                             <p>{item.label}</p>
-                                            <h6>{formatNumberDec(item.value)}</h6>
+                                            <h6>{formatNumber2Dec(item.value)}</h6>
                                         </div>
                                     </div>
                                 ))}

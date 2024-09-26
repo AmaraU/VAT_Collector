@@ -13,7 +13,7 @@ export const Invoicing = () => {
     const [ lineItems, setLineItems ] = useState([]);
     const [ openCustom, setOpenCustom ] = useState(false);
     const [ invoicingData, setInvoicingData ] = useState([]);
-    const [ invoicing, setInvoicing ] = useState([]);
+    const [ groupedInvoicing, setGroupedInvoicing ] = useState([]);
     const [ pieInvoicing, setPieInvoicing ] = useState([]);
     const popupRef = useRef(null);
 
@@ -24,14 +24,31 @@ export const Invoicing = () => {
 
     const fetchData = async () => {
         try {
-            const result = await axios('https://connectedge.covenantmfb.com/FirsCollection.AP/api/reports/dashboard/');
-            
-            setInvoicingData(result.data.result.data.summaryDetails.dashBoardReport[2]);
-            setInvoicing(result.data.result.data.summaryDetails.dashBoardReport[2].transactionDetails.sort((a, b) => b.totalVat - a.totalVat).slice(0,3));
-            setPieInvoicing(result.data.result.data.summaryDetails.dashBoardReport[2].transactionDetails.sort((a, b) => b.totalVat - a.totalVat).slice(0,3));
-        
-        } catch (err) { console.log(err); }
+            const result = await axios('https://connectedge.covenantmfb.com/FirsCollection.AP/api/reports/dashboard-vat-collections/');
+            setInvoicingData(result.data.result.data.filter(e => e.tenant.toLowerCase() === "invoicing"));
+        } catch (err) {
+            console.log(err);
+        }
     }
+
+    useEffect(() => {
+        setGroupedInvoicing(Object.entries(groupByTenantNameAndCalculateTotal(invoicingData)));
+        setPieInvoicing(Object.entries(groupByTenantNameAndCalculateTotal(invoicingData)).sort(
+            ([,a], [,b]) => b.totalValue - a.totalValue
+        ).slice(0,3));
+    }, [invoicingData]);
+
+    const groupByTenantNameAndCalculateTotal = (items) => {
+        return items.reduce((acc, item) => {
+          const key = item.tenantName;
+          if (!acc[key]) {
+            acc[key] = { totalValue: 0, items: [] };
+          }
+          acc[key].totalValue += item.vat;
+          acc[key].items.push(item);
+          return acc;
+        }, {});
+    };
 
 
     const formatNumber = (number) => {
@@ -43,15 +60,20 @@ export const Invoicing = () => {
             maximumFractionDigits: 2
         }).format(number);
     };
+    const formatNumber2Dec = (number) => {
+        return number % 1 === 0
+          ? new Intl.NumberFormat('en-US').format(number)
+          : new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(number);
+    };
     
     const pieData = {
-        labels: pieInvoicing.map(item => item.name.toUpperCase()),
+        labels: pieInvoicing.map(([category]) => category),
         datasets: [
             {
-                data: period === 'daily' ? pieInvoicing.map(item => item.totalVat)
-                    : period === 'weekly' ? pieInvoicing.map(item => item.totalVat*7)
-                    : period === 'monthly' ? pieInvoicing.map(item => item.totalVat*30)
-                    : pieInvoicing.map(item => item.totalVat*30),
+                data: period === 'daily' ? pieInvoicing.map(([, {totalValue}]) => totalValue)
+                    : period === 'weekly' ? pieInvoicing.map(([, {totalValue}]) => totalValue*7)
+                    : period === 'monthly' ? pieInvoicing.map(([, {totalValue}]) => totalValue*30)
+                    : pieInvoicing.map(([, {totalValue}]) => totalValue),
                 backgroundColor: [ '#4C72FA', '#FFBE4C', '#40C4AA' ],
                 borderWidth: 0,
             },
@@ -72,9 +94,9 @@ export const Invoicing = () => {
     
     const lineData = {
         labels: ['', '', '', '', '', '', ''],
-        datasets: invoicing.map((inv, index) => ({
-            label: inv.name.toUpperCase(),
-            data: 
+        datasets: groupedInvoicing.map(([category], index) => ({
+            label: category.toUpperCase(),
+            data:
                 index === 0 ? [65000000, 22000000, 76000000, 81000000, 56000000, 55000000, 40000000] :
                 index === 1 ? [45000000, 49000000, 60000000, 43000000, 61000000, 35000000, 20000000] :
                 index === 2 ? [10000000, 35000000, 23000000, 65000000, 90000000, 15000000, 42000000] :
@@ -214,20 +236,20 @@ export const Invoicing = () => {
                         TRANSACTIONS
                     </h5>
                     <h1>
-                        {formatNumber(period === 'daily' ? invoicingData.totalDailyTransaction
-                                    : period === 'weekly' ? invoicingData.totalDailyTransaction*7
-                                    : period === 'monthly' ? invoicingData.totalDailyTransaction*30
-                                    : invoicingData.totalDailyTransaction
+                        {formatNumber(period === 'daily' ? invoicingData.length
+                                    : period === 'weekly' ? invoicingData.length*7
+                                    : period === 'monthly' ? invoicingData.length*30
+                                    : invoicingData.length
                         )}
                     </h1>
                 </div>
                 <div className={styles.infoDiv} >
                     <h5>TOTAL AMOUNT</h5>
                     <h1>
-                        {formatNumberDec(period === 'daily' ? invoicing.reduce((sum, item) => sum + item.totalAmount, 0)
-                                    : period === 'weekly' ? invoicing.reduce((sum, item) => sum + item.totalAmount, 0)*7
-                                    : period === 'monthly' ? invoicing.reduce((sum, item) => sum + item.totalAmount, 0)*30
-                                    : invoicing.reduce((sum, item) => sum + item.totalAmount, 0)
+                        {formatNumberDec(period === 'daily' ? invoicingData.reduce((sum, item) => sum + item.amount, 0)
+                                    : period === 'weekly' ? invoicingData.reduce((sum, item) => sum + item.amount, 0)*7
+                                    : period === 'monthly' ? invoicingData.reduce((sum, item) => sum + item.amount, 0)*30
+                                    : invoicingData.reduce((sum, item) => sum + item.amount, 0)
                         )}
                     </h1>
                 </div>
@@ -235,10 +257,10 @@ export const Invoicing = () => {
                     <h5>VAT GENERATED</h5>
                     <div className={styles.vatDiv}>
                         <h1>
-                            {formatNumberDec(period === 'daily' ? invoicingData.totalDailyVat
-                                        : period === 'weekly' ? invoicingData.totalDailyVat*7
-                                        : period === 'monthly' ? invoicingData.totalDailyVat*30
-                                        : invoicingData.totalDailyVat
+                            {formatNumberDec(period === 'daily' ? invoicingData.reduce((sum, item) => sum + item.vat, 0)
+                                        : period === 'weekly' ? invoicingData.reduce((sum, item) => sum + item.vat, 0)*7
+                                        : period === 'monthly' ? invoicingData.reduce((sum, item) => sum + item.vat, 0)*30
+                                        : invoicingData.reduce((sum, item) => sum + item.vat, 0)
                             )}
                         </h1>
                         <div className={styles.percentage}>10%</div>
@@ -275,7 +297,7 @@ export const Invoicing = () => {
                                     <div className={styles.labelColor} style={{backgroundColor: item.color}}></div>
                                     <div>
                                         <p>{item.label}</p>
-                                        <h5>{formatNumber(item.value)}</h5>
+                                        <h5>{formatNumber2Dec(item.value)}</h5>
                                     </div>
                                 </div>
                             ))}

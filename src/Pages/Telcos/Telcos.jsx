@@ -13,7 +13,7 @@ export const Telcos = () => {
     const [ lineItems, setLineItems ] = useState([]);
     const [ openCustom, setOpenCustom ] = useState(false);
     const [ telcosData, setTelcosData ] = useState([]);
-    const [ telcos, setTelcos ] = useState([]);
+    const [ groupedTelcos, setGroupedTelcos ] = useState([]);
     const [ pieTelcos, setPieTelcos ] = useState([]);
     const popupRef = useRef(null);
 
@@ -24,14 +24,31 @@ export const Telcos = () => {
 
     const fetchData = async () => {
         try {
-            const result = await axios('https://connectedge.covenantmfb.com/FirsCollection.AP/api/reports/dashboard/');
-            
-            setTelcosData(result.data.result.data.summaryDetails.dashBoardReport[1]);
-            setTelcos(result.data.result.data.summaryDetails.dashBoardReport[1].transactionDetails.sort((a, b) => b.totalVat - a.totalVat));
-            setPieTelcos(result.data.result.data.summaryDetails.dashBoardReport[1].transactionDetails.sort((a, b) => b.totalVat - a.totalVat).slice(0,3));
-        
-        } catch (err) { console.log(err); }
+            const result = await axios('https://connectedge.covenantmfb.com/FirsCollection.AP/api/reports/dashboard-vat-collections/');
+            setTelcosData(result.data.result.data.filter(e => e.tenant.toLowerCase() === "telcos"));
+        } catch (err) {
+            console.log(err);
+        }
     }
+
+    useEffect(() => {
+        setGroupedTelcos(Object.entries(groupByTenantNameAndCalculateTotal(telcosData)));
+        setPieTelcos(Object.entries(groupByTenantNameAndCalculateTotal(telcosData)).sort(
+            ([,a], [,b]) => b.totalValue - a.totalValue
+        ).slice(0,3));
+    }, [telcosData]);
+
+    const groupByTenantNameAndCalculateTotal = (items) => {
+        return items.reduce((acc, item) => {
+          const key = item.tenantName;
+          if (!acc[key]) {
+            acc[key] = { totalValue: 0, items: [] };
+          }
+          acc[key].totalValue += item.vat;
+          acc[key].items.push(item);
+          return acc;
+        }, {});
+    };
 
     const formatNumber = (number) => {
         return new Intl.NumberFormat('en-US').format(number);
@@ -42,15 +59,20 @@ export const Telcos = () => {
             maximumFractionDigits: 2
         }).format(number);
     };
+    const formatNumber2Dec = (number) => {
+        return number % 1 === 0
+          ? new Intl.NumberFormat('en-US').format(number)
+          : new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(number);
+    };
     
     const pieData = {
-        labels: pieTelcos.map(item => item.name.toUpperCase()),
+        labels: pieTelcos.map(([category]) => category),
         datasets: [
             {
-                data: period === 'daily' ? pieTelcos.map(item => item.totalVat)
-                    : period === 'weekly' ? pieTelcos.map(item => item.totalVat*7)
-                    : period === 'monthly' ? pieTelcos.map(item => item.totalVat*30)
-                    : pieTelcos.map(item => item.totalVat*30),
+                data: period === 'daily' ? pieTelcos.map(([, {totalValue}]) => totalValue)
+                    : period === 'weekly' ? pieTelcos.map(([, {totalValue}]) => totalValue*7)
+                    : period === 'monthly' ? pieTelcos.map(([, {totalValue}]) => totalValue*30)
+                    : pieTelcos.map(([, {totalValue}]) => totalValue),
                 backgroundColor: [ '#4C72FA', '#FFBE4C', '#40C4AA' ],
                 borderWidth: 0,
             },
@@ -71,8 +93,8 @@ export const Telcos = () => {
 
     const lineData = {
         labels: ['', '', '', '', '', '', ''],
-        datasets: telcos.map((telco, index) => ({
-            label: telco.name.toUpperCase(),
+        datasets: groupedTelcos.map(([category], index) => ({
+            label: category,
             data: 
                 index === 0 ? [65000000, 22000000, 76000000, 81000000, 56000000, 55000000, 40000000] :
                 index === 1 ? [45000000, 49000000, 60000000, 43000000, 61000000, 35000000, 20000000] :
@@ -213,20 +235,20 @@ export const Telcos = () => {
                         TRANSACTIONS
                     </h5>
                     <h1>
-                        {formatNumber(period === 'daily' ? telcosData.totalDailyTransaction
-                                    : period === 'weekly' ? telcosData.totalDailyTransaction*7
-                                    : period === 'monthly' ? telcosData.totalDailyTransaction*30
-                                    : telcosData.totalDailyTransaction
+                        {formatNumber(period === 'daily' ? telcosData.length
+                                    : period === 'weekly' ? telcosData.length*7
+                                    : period === 'monthly' ? telcosData.length*30
+                                    : telcosData.length
                         )}
                     </h1>
                 </div>
-                <div className={styles.infoDiv} >
+                <div className={styles.infoDiv}>
                     <h5>TOTAL AMOUNT</h5>
                     <h1>
-                        {formatNumberDec(period === 'daily' ? telcos.reduce((sum, item) => sum + item.totalAmount, 0)
-                                    : period === 'weekly' ? telcos.reduce((sum, item) => sum + item.totalAmount, 0)*7
-                                    : period === 'monthly' ? telcos.reduce((sum, item) => sum + item.totalAmount, 0)*30
-                                    : telcos.reduce((sum, item) => sum + item.totalAmount, 0)
+                        {formatNumberDec(period === 'daily' ? telcosData.reduce((sum, item) => sum + item.amount, 0)
+                                    : period === 'weekly' ? telcosData.reduce((sum, item) => sum + item.amount, 0)*7
+                                    : period === 'monthly' ? telcosData.reduce((sum, item) => sum + item.amount, 0)*30
+                                    : telcosData.reduce((sum, item) => sum + item.amount, 0)
                         )}
                     </h1>
                 </div>
@@ -234,10 +256,10 @@ export const Telcos = () => {
                     <h5>VAT GENERATED</h5>
                     <div className={styles.vatDiv}>
                         <h1>
-                            {formatNumberDec(period === 'daily' ? telcosData.totalDailyVat
-                                        : period === 'weekly' ? telcosData.totalDailyVat*7
-                                        : period === 'monthly' ? telcosData.totalDailyVat*30
-                                        : telcosData.totalDailyVat
+                            {formatNumberDec(period === 'daily' ? telcosData.reduce((sum, item) => sum + item.vat, 0)
+                                        : period === 'weekly' ? telcosData.reduce((sum, item) => sum + item.vat, 0)*7
+                                        : period === 'monthly' ? telcosData.reduce((sum, item) => sum + item.vat, 0)*30
+                                        : telcosData.reduce((sum, item) => sum + item.vat, 0)
                             )}
                         </h1>
                         <div className={styles.percentage}>10%</div>
@@ -274,7 +296,7 @@ export const Telcos = () => {
                                     <div className={styles.labelColor} style={{backgroundColor: item.color}}></div>
                                     <div>
                                         <p>{item.label}</p>
-                                        <h5>{formatNumber(item.value)}</h5>
+                                        <h5>{formatNumber2Dec(item.value)}</h5>
                                     </div>
                                 </div>
                             ))}
