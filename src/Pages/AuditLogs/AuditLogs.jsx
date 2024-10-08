@@ -92,6 +92,7 @@ export const AuditLogs = () => {
                         <th>SN</th>
                         <th>User</th>
                         <th>Type</th>
+                        <th>Tax Type</th>
                         <th>Amount (Naira)</th>
                         <th>Date</th>
                         <th>Time</th>
@@ -103,6 +104,7 @@ export const AuditLogs = () => {
                                 <td>{index+1 < 10 ? `0` : ``}{index+1}</td>
                                 <td>{log.tenantName}</td>
                                 <td>{log.tenant}</td>
+                                <td>VAT</td>
                                 <td>{formatNumber(log.amount)}</td>
                                 <td>{format(new Date(log.transactionDate), 'dd-MM-yyyy')}</td>
                                 <td>{format(new Date(log.transactionDate), 'hh:mm a')}</td>
