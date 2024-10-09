@@ -15,12 +15,12 @@ export const AuditLogs = () => {
 
     useEffect(() => {
         fetchLogs();
-    });
+    }, []);
 
     const fetchLogs = async () => {
         try {
             const result = await axios('https://connectedge.covenantmfb.com/FirsCollection.AP/api/reports/dashboard-vat-collections/');
-            setLogs(result.data.result.data);
+            setLogs(result.data.result.data.sort((a, b) => new Date(b.transactionDate) - new Date(a.transactionDate)));
         } catch (err) {
             console.log(err);
         }
