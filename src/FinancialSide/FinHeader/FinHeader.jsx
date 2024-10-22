@@ -38,7 +38,7 @@ export const FinHeader = () => {
                 <button><img src={getImageUrl('bell.png')} /></button>
                 <button className={styles.profile} onClick={()=>setOpened(!opened)}>UB</button>
                 <div className={`${styles.closed} ${opened && styles.signOut}`} ref={signpop}>
-                    <a href="/signin">Sign out</a>
+                    <a href="/">Sign out</a>
                 </div>
             </div>
         </div>
