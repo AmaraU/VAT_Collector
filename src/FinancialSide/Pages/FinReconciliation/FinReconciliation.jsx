@@ -93,30 +93,20 @@ export const FinReconciliation = () => {
 
             <div className={styles.tableDiv}>
                 
-                <div className={styles.choices}>
-                    {/* <div className={styles.categories}>
-                        Category:
-                        <button onClick={()=>setCategory('')} className={category === '' ? styles.active : ''}>All</button>
-                        <button onClick={()=>setCategory('banking')} className={category === 'banking' ? styles.active : ''}>Banking</button>
-                        <button onClick={()=>setCategory('telcos')} className={category === 'telcos' ? styles.active : ''}>Telco</button>
-                        <button onClick={()=>setCategory('invoicing')} className={category === 'invoicing' ? styles.active : ''}>Invoicing</button>
-                    </div> */}
-
-                    <div className={styles.periods}>
-                        Period:
-                        <button onClick={()=>setPeriod('daily')} className={period === 'daily' ? styles.active : ''}>Daily</button>
-                        <button onClick={()=>setPeriod('weekly')} className={period === 'weekly' ? styles.active : ''}>Weekly</button>
-                        <button onClick={()=>setPeriod('monthly')} className={period === 'monthly' ? styles.active : ''}>Monthly</button>
-                        <div>
-                            <button onClick={()=>setOpenCustom(!openCustom)} className={period === 'custom' ? styles.active : ''}>Custom</button>
-                            <div className={`${styles.closed} ${openCustom && styles.customDiv}`} ref={popupRef}>
-                                <h4>CUSTOM PERIOD</h4>
-                                <div className={styles.dates}>
-                                    <input type="date" />
-                                    <input type="date" />
-                                </div>
-                                <button onClick={setCustom}>Set Custom Date</button>
+                <div className={styles.periods}>
+                    Period:
+                    <button onClick={()=>setPeriod('daily')} className={period === 'daily' ? styles.active : ''}>Daily</button>
+                    <button onClick={()=>setPeriod('weekly')} className={period === 'weekly' ? styles.active : ''}>Weekly</button>
+                    <button onClick={()=>setPeriod('monthly')} className={period === 'monthly' ? styles.active : ''}>Monthly</button>
+                    <div>
+                        <button onClick={()=>setOpenCustom(!openCustom)} className={period === 'custom' ? styles.active : ''}>Custom</button>
+                        <div className={`${styles.closed} ${openCustom && styles.customDiv}`} ref={popupRef}>
+                            <h4>CUSTOM PERIOD</h4>
+                            <div className={styles.dates}>
+                                <input type="date" />
+                                <input type="date" />
                             </div>
+                            <button onClick={setCustom}>Set Custom Date</button>
                         </div>
                     </div>
                 </div>

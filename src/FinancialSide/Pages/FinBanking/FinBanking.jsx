@@ -21,25 +21,25 @@ export const FinBanking = () => {
         {
             bank: 'First Bank',
             total_amount: 10235951.23,
-            type: 'Savings',
+            type: 'Corporate',
             account_number: 6678899900,
         },
         {
             bank: 'Guaranty Trust Bank',
             total_amount: 21235951.23,
-            type: 'Savings',
+            type: 'Corporate',
             account_number: 5566778899,
         },
         {
             bank: 'Access Bank',
             total_amount: 49522951.23,
-            type: 'Savings',
+            type: 'Corporate',
             account_number: 987654321,
         },
         {
             bank: 'FCMB',
             total_amount: 10235951.23,
-            type: 'Savings',
+            type: 'Corporate',
             account_number: 6678899900,
         },
     ];
