@@ -18,6 +18,7 @@ import { FinOverview } from './FinancialSide/Pages/FinOverview/FinOverview';
 import { FinBanking } from './FinancialSide/Pages/FinBanking/FinBanking';
 import { FinReconciliation } from './FinancialSide/Pages/FinReconciliation/FinReconciliation';
 import { FinReports } from './FinancialSide/Pages/FinReports/FinReports';
+import { ChakraProvider } from '@chakra-ui/react';
 
 
 
@@ -53,9 +54,11 @@ function App() {
   ]);
 
   return (
-    <div className={styles.App}>
+    // <div className={styles.App}>
+    <ChakraProvider>
       <RouterProvider router={router} />
-    </div>
+    </ChakraProvider>
+    // </div>
   );
 }
 

@@ -5,6 +5,7 @@ import { Chart as ChartJS, LineElement, ArcElement, CategoryScale, LinearScale, 
 import axios from "axios";
 import { getImageUrl } from "../../../../utils";
 import Pagination from "../../../Components/Pagination/Pagination";
+import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Spinner, useDisclosure } from "@chakra-ui/react";
 
 ChartJS.register(LineElement, ArcElement, CategoryScale, LinearScale, PointElement, Tooltip, Legend);
 
@@ -12,8 +13,13 @@ export const FinBanking = () => {
 
     const [ openCustom, setOpenCustom ] = useState(false);
     const [ period, setPeriod ] = useState('daily');
+    const [ modalType, setModalType ] = useState('daily');
     const [ currentPage, setCurrentPage ] = useState(1);
     const [ showValues, setShowValues ] = useState(true);
+    const { isOpen: isOpenLink, onOpen: onOpenLink, onClose: onCloseLink } = useDisclosure();
+    const { isOpen: isOpenDownload, onOpen: onOpenDownload, onClose: onCloseDownload } = useDisclosure();
+    const { isOpen: isOpenLoading, onOpen: onOpenLoading, onClose: onCloseLoading } = useDisclosure();
+    const { isOpen: isOpenComplete, onOpen: onOpenComplete, onClose: onCloseComplete } = useDisclosure();
     const popupRef = useRef(null);
 
 
@@ -190,6 +196,15 @@ export const FinBanking = () => {
         navigator.clipboard.writeText(toCopy);
     }
 
+    const handleSubmit = (type) => {
+        setModalType(type)
+        onCloseLink();
+        onCloseDownload();
+        onOpenLoading();
+        setTimeout(() => onCloseLoading(), 5000);
+        setTimeout(() => onOpenComplete(), 5000);
+    }
+
     const handleClickOutside = (event) => {
         if (popupRef.current && !popupRef.current.contains(event.target)) {
             setOpenCustom(false);
@@ -205,6 +220,7 @@ export const FinBanking = () => {
 
 
     return (
+        <>
         <div className={styles.whole}>
             
             <div className={styles.bankingHeader}>
@@ -240,12 +256,12 @@ export const FinBanking = () => {
                 </div>
 
                 <div className={styles.buttons}>
-                    <button className={styles.buttonOne}><img src={getImageUrl('refresh.svg')} alt="refresh" /></button>
-                    <button className={styles.buttonTwo}>
+                    <button className={styles.buttonOne} onClick={onOpenComplete}><img src={getImageUrl('refresh.svg')} alt="refresh" /></button>
+                    <button className={styles.buttonTwo} onClick={onOpenDownload}>
                         <img src={getImageUrl('orangeDownload.svg')} alt="" />
                         Download Statement
                     </button>
-                    <button className={styles.buttonThree}>
+                    <button className={styles.buttonThree} onClick={onOpenLink}>
                         <img src={getImageUrl('whitePlus.svg')} alt="" />
                         Link Account
                     </button>
@@ -269,6 +285,7 @@ export const FinBanking = () => {
                                 src={bank.bank.toLowerCase() === 'first bank' ? getImageUrl('firstBank.svg') :
                                     bank.bank.toLowerCase() === 'guaranty trust bank' ? getImageUrl('gtBank.svg') :
                                     bank.bank.toLowerCase() === 'access bank' ? getImageUrl('accessBank.svg') :
+                                    bank.bank.toLowerCase() === 'fcmb' ? getImageUrl('fcmb.svg') :
                                     ""
                                 }
                                 className={styles.bankImg}
@@ -321,7 +338,109 @@ export const FinBanking = () => {
                     onPageChange={handlePageChange}
                 />
             </div>
-
         </div>
+
+
+        <Modal isCentered size='sm' closeOnOverlayClick={false} isOpen={isOpenLink} onClose={onCloseLink} >
+            <ModalOverlay />
+            <ModalContent>
+                <ModalHeader><h4 className={styles.linkHeader}>Link Account</h4></ModalHeader>
+                <ModalCloseButton />
+
+                <ModalBody>
+                    <form action="" className={styles.linkForm}>
+                        <label htmlFor="type">Account Type</label>
+                        <select name="type" id="">
+                            <option value="">Select account type</option>
+                        </select>
+
+                        <label htmlFor="currency">Currency</label>
+                        <select name="currency" id="">
+                            <option value="">Select currency</option>
+                        </select>
+
+                        <label htmlFor="institution">Financial Institution</label>
+                        <select name="institution" id="">
+                            <option value="">Select institution</option>
+                        </select>
+
+                        <label htmlFor="acct_number">Account Number</label>
+                        <input type="number" name="acct_number" id="" placeholder="e.g 9876543221"/>
+                    </form>
+                </ModalBody>
+
+                <ModalFooter pt={2} borderTop='1px solid #DFE1E7'>
+                    <button onClick={()=>handleSubmit('link')} className={styles.linkButton}>Add Account</button>
+                </ModalFooter>
+            </ModalContent>
+        </Modal>
+
+        <Modal isCentered size='md' closeOnOverlayClick={false} isOpen={isOpenDownload} onClose={onCloseDownload} >
+            <ModalOverlay />
+            <ModalContent>
+                <ModalHeader><h4 className={styles.downloadHeader}>Download Statement</h4></ModalHeader>
+                <ModalCloseButton />
+
+                <ModalBody>
+                    <form action="" className={styles.downloadForm}>
+                        <div className={styles.dates}>
+                            <div>
+                                <label htmlFor="from_date">From:</label>
+                                <input type="date" name="from_date" id="" />
+                            </div>
+
+                            <div>
+                                <label htmlFor="to_date">To:</label>
+                                <input type="date" name="to_date" id="" />
+                            </div>
+                        </div>
+
+                        <label htmlFor="format">Download Format</label>
+                        <select name="format" id="">
+                            <option value="">Select format</option>
+                            <option value="">PDF (Portable Document Format)</option>
+                            <option value="">CSV (Comma Separated Values)</option>
+                            <option value="">XLSX (Microsoft Excel)</option>
+                        </select>
+
+                        <label htmlFor="account">Account</label>
+                        <select name="account" id="">
+                            <option value="">Select account</option>
+                        </select>
+                    </form>
+                </ModalBody>
+
+                <ModalFooter pt={2} borderTop='1px solid #DFE1E7'>
+                    <button onClick={()=>handleSubmit('download')} className={styles.downloadButton}>Download</button>
+                </ModalFooter>
+            </ModalContent>
+        </Modal>
+
+        <Modal isCentered size='sm' closeOnOverlayClick={false} isOpen={isOpenLoading} onClose={onCloseLoading} >
+            <ModalOverlay />
+            <ModalContent alignItems='center' h='200px' maxHeight='80vh' justifyContent='center'>
+                <Spinner color="#D94F00" h='48px' w='48px' thickness="4px" />
+            </ModalContent>
+        </Modal>
+
+        <Modal isCentered size='md' closeOnOverlayClick={false} isOpen={isOpenComplete} onClose={onCloseComplete} >
+            <ModalOverlay />
+            <ModalContent>
+                <ModalBody>
+                    <div className={styles.complete}>
+                        <img src={getImageUrl('success.svg')} alt="" />
+                        {modalType === 'download' ? <h3>Your Statement Is Ready!</h3>
+                        : modalType === 'link' ? <h3>Account Added</h3>
+                        : ''}
+                        {modalType === 'download' ? <p>Your statement has been downloaded. Check your downloads folder to view it.</p> : ''}
+                    </div>
+                </ModalBody>
+                <ModalFooter pt={2} borderTop='1px solid #DFE1E7'>
+                    <button onClick={onCloseComplete} className={styles.completeButton}>Continue</button>
+                </ModalFooter>
+            </ModalContent>
+        </Modal>
+
+        </>
     )
 }

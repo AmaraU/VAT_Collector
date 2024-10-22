@@ -150,3 +150,76 @@
     font-weight: 500;
     color: #0D0D12;
 }
+
+
+
+.formHeader {
+    font-size: 21px;
+    font-weight: 600;
+    color: #36394A;
+}
+
+.reportForm {
+    display: flex;
+    flex-direction: column;
+    max-height: 55vh;
+    overflow-y: scroll;
+}
+.reportForm .dates {
+    display: flex;
+    gap: 24px;
+}
+.dates div {
+    width: 100%;
+}
+.reportForm label {
+    font-size: 15px;
+    font-weight: 500;
+    color: #0D0D12;
+    margin-bottom: 4px;
+}
+.reportForm input,
+.reportForm select {
+    width: 100%;
+    border-radius: 9px;
+    padding: 11px 13px;
+    border: 1.5px solid #ECEFF3;
+    margin-bottom: 8px;
+}
+.reportButton {
+    width: 100%;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0) 100%), linear-gradient(0deg, #000000, #000000);
+    color: #FFFFFF;
+    font-size: 15px;
+    font-weight: 500;
+    border-radius: 9px;
+    padding: 13px;
+}
+
+.complete {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 12px 0;
+    
+}
+.complete h3 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #000000;
+}
+.complete p {
+    font-size: 14px;
+    font-weight: 400;
+    color: #36394A;
+}
+.completeButton {
+    width: 100%;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0) 100%), linear-gradient(0deg, #D6301F, #D6301F);
+    color: #FFFFFF;
+    font-size: 15px;
+    font-weight: 500;
+    border-radius: 9px;
+    padding: 13px;
+}

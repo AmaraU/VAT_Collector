@@ -3,7 +3,7 @@ import styles from './FinReconciliation.module.css';
 import { getImageUrl } from "../../../../utils";
 import axios from 'axios';
 import Pagination from "../../../Components/Pagination/Pagination";
-import { Modal } from "@chakra-ui/react";
+import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Spinner, useDisclosure } from "@chakra-ui/react";
 
 
 export const FinReconciliation = () => {
@@ -13,6 +13,9 @@ export const FinReconciliation = () => {
     const [ category, setCategory ] = useState('');
     const [ currentPage, setCurrentPage ] = useState(1);
     const [ openCustom, setOpenCustom ] = useState(false);
+    const { isOpen: isOpenRecon, onOpen: onOpenRecon, onClose: onCloseRecon } = useDisclosure();
+    const { isOpen: isOpenLoading, onOpen: onOpenLoading, onClose: onCloseLoading } = useDisclosure();
+    const { isOpen: isOpenComplete, onOpen: onOpenComplete, onClose: onCloseComplete } = useDisclosure();
     const popupRef = useRef(null);
 
     useEffect(() => {
@@ -49,10 +52,23 @@ export const FinReconciliation = () => {
     const formatNumber = (number) => {
         return new Intl.NumberFormat('en-US').format(number);
     };
+    const formatNumberDec = (number) => {
+        return new Intl.NumberFormat('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }).format(number);
+    };
 
     const setCustom = () => {
         setPeriod('custom');
         setOpenCustom(false);        
+    }
+
+    const handleSubmit = () => {
+        onCloseRecon();
+        onOpenLoading();
+        setTimeout(() => onCloseLoading(), 5000);
+        setTimeout(() => onOpenComplete(), 5000);
     }
 
     const handleClickOutside = (event) => {
@@ -76,7 +92,7 @@ export const FinReconciliation = () => {
             
             <div className={styles.reconHeader}>
                 <h2>Reconciliation</h2>
-                <button><img src={getImageUrl('whitePlus.svg')}/>Reconcile</button>
+                <button onClick={onOpenRecon}><img src={getImageUrl('whitePlus.svg')}/>Reconcile</button>
             </div>
 
             <div className={styles.totals}>
@@ -142,8 +158,69 @@ export const FinReconciliation = () => {
             </div>
         </div>
 
-        <Modal>
+        <Modal isCentered size='md' closeOnOverlayClick={false} isOpen={isOpenRecon} onClose={onCloseRecon} >
+            <ModalOverlay />
+            <ModalContent>
+                <ModalHeader><h4 className={styles.modalHeader}>Reconcile</h4></ModalHeader>
+                <ModalCloseButton />
 
+                <ModalBody>
+                    <div className={styles.modalForm}>
+
+                        <div className={styles.formTotals}>
+                            <p>Total Wallet Balance</p>
+                            <p><b>₦{formatNumberDec(142000000)}</b></p>
+                        </div>
+                        <div className={styles.formTotals}>
+                            <p>Total Commission Earned</p>
+                            <p><b>₦{formatNumberDec(51000000)}</b></p>
+                        </div>
+
+                        <form action="" className={styles.theForm}>
+
+                            <label htmlFor="unpaid">Unpaid Fund</label>
+                            <input type="number" placeholder="Enter total unpaid amount" />
+
+                            <label htmlFor="investment">Investment Fund</label>
+                            <input type="number" placeholder="Enter amount in investments" />
+
+                            <label htmlFor="format">Additional Charges</label>
+                            <input type="number" placeholder="Enter other charges" />
+
+                            <label htmlFor="format">Post Account Balance</label>
+                            <input type="number" placeholder="Enter final account balance" />
+
+                        </form>
+                    </div>
+                </ModalBody>
+
+                <ModalFooter pt={2} borderTop='1px solid #DFE1E7'>
+                    <button onClick={()=>handleSubmit('download')} className={styles.downloadButton}>Download</button>
+                </ModalFooter>
+            </ModalContent>
+        </Modal>
+
+        <Modal isCentered size='sm' closeOnOverlayClick={false} isOpen={isOpenLoading} onClose={onCloseLoading} >
+            <ModalOverlay />
+            <ModalContent alignItems='center' h='200px' maxHeight='80vh' justifyContent='center'>
+                <Spinner color="#D94F00" h='48px' w='48px' thickness="4px" />
+            </ModalContent>
+        </Modal>
+
+        <Modal isCentered size='md' closeOnOverlayClick={false} isOpen={isOpenComplete} onClose={onCloseComplete} >
+            <ModalOverlay />
+            <ModalContent>
+                <ModalBody>
+                    <div className={styles.complete}>
+                        <img src={getImageUrl('success.svg')} alt="" />
+                        <h3>Reconciliation Added</h3>
+                        {/* {modalType === 'download' ? <p>Your statement has been downloaded. Check your downloads folder to view it.</p> : ''} */}
+                    </div>
+                </ModalBody>
+                <ModalFooter pt={2} borderTop='1px solid #DFE1E7'>
+                    <button onClick={onCloseComplete} className={styles.completeButton}>Continue</button>
+                </ModalFooter>
+            </ModalContent>
         </Modal>
         </>
     )
