@@ -18,32 +18,112 @@ export const FinReconciliation = () => {
     const { isOpen: isOpenComplete, onOpen: onOpenComplete, onClose: onCloseComplete } = useDisclosure();
     const popupRef = useRef(null);
 
-    useEffect(() => {
-        fetchData();
-    });
+    // useEffect(() => {
+    //     fetchData();
+    // });
 
-    const fetchData = async () => {
-        try {
-            const result = await axios('https://connectedge.covenantmfb.com/FirsCollection.AP/api/reports/dashboard-vat-collections/');
-            setReports(result.data.result.data);
-            console.log(result.data.result.data);
-        } catch (err) {
-            console.log(err);
+    // const fetchData = async () => {
+    //     try {
+    //         const result = await axios('https://connectedge.covenantmfb.com/FirsCollection.AP/api/reports/dashboard-vat-collections/');
+    //         setReports(result.data.result.data);
+    //         console.log(result.data.result.data);
+    //     } catch (err) {
+    //         console.log(err);
+    //     }
+    // }
+
+    const recons = [
+        {
+            id: 'GT-00119402-201',
+            commission_earned: 77391.45,
+            user: 'Toluwani Ojo',
+            wallet_balance: 15767876,
+            date: '20-10-2024',
+        },
+        {
+            id: 'GT-00119402-201',
+            commission_earned: 63356.88,
+            user: 'Adebayo Olufemi',
+            wallet_balance: 21767876,
+            date: '19-10-2024',
+        },
+        {
+            id: 'GT-00119402-201',
+            commission_earned: 12000.23,
+            user: 'Chinaza Okeke',
+            wallet_balance: 13456789,
+            date: '18-10-2024',
+        },
+        {
+            id: 'GT-00119402-201',
+            commission_earned: 24985.41,
+            user: 'Emeka Adedoyin',
+            wallet_balance: 48912345,
+            date: '17-10-2024',
+        },
+        {
+            id: 'GT-00119402-201',
+            commission_earned: 15400.89,
+            user: 'Tolu Alabi',
+            wallet_balance: 8912345,
+            date: '16-10-2024',
+        },
+        {
+            id: 'GT-00119402-201',
+            commission_earned: 40000.76,
+            user: 'Zainab Hassan',
+            wallet_balance: 3456789,
+            date: '15-10-2024',
+        },
+        {
+            id: 'GT-00119402-201',
+            commission_earned: 12020.54,
+            user: 'Ngozi Uche',
+            wallet_balance: 8901234,
+            date: '03-10-2024',
+        },
+        {
+            id: 'GT-00119402-201',
+            commission_earned: 77391.45,
+            user: 'Toluwani Ojo',
+            wallet_balance: 15767876,
+            date: '02-10-2024',
+        },
+        {
+            id: 'GT-00119402-201',
+            commission_earned: 63356.88,
+            user: 'Adebayo Olufemi',
+            wallet_balance: 21767876,
+            date: '02-10-2024',
+        },
+        {
+            id: 'GT-00119402-201',
+            commission_earned: 77391.45,
+            user: 'Chinaza Okeke',
+            wallet_balance: 15767876,
+            date: '01-10-2024',
+        },
+        {
+            id: 'GT-00119402-201',
+            commission_earned: 77391.45,
+            user: 'Emeka Adedoyin',
+            wallet_balance: 15767876,
+            date: '01-10-2024',
         }
-    }
+    ]
 
 
-    const filteredReports = reports.filter(report => {
-        return (
-            (category === "" || report.tenant.toLowerCase() === category) 
-            // (period === "" || report.period.toLowerCase() === period)
-        )
-    })
+    // const filteredReports = reports.filter(report => {
+    //     return (
+    //         (category === "" || report.tenant.toLowerCase() === category) 
+    //         // (period === "" || report.period.toLowerCase() === period)
+    //     )
+    // })
 
     const itemsPerPage = 10;
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentReports = filteredReports.slice(indexOfFirstItem, indexOfLastItem);
+    const currentRecons = recons.slice(indexOfFirstItem, indexOfLastItem);
 
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
@@ -130,27 +210,29 @@ export const FinReconciliation = () => {
                 <table className={styles.reportTable}>
                     <thead>
                         <th>SN</th>
+                        <th>Transaction ID</th>
+                        <th>Total Commission Earned</th>
                         <th>User</th>
-                        <th>Type</th>
-                        <th>Amount (Naira)</th>
-                        <th>Period</th>
+                        <th>Total Wallet Balance</th>
+                        <th>Date</th>
                     </thead>
 
                     <tbody>
-                        {currentReports.map((rep, index) => (
+                        {currentRecons.map((rec, index) => (
                             <tr key={index}>
                                 <td>{index+1 < 10 ? `0` : ``}{index+1}</td>
-                                <td>{rep.tenantName}</td>
-                                <td>{rep.tenant}</td>
-                                <td>{formatNumber(rep.amount)}</td>
-                                <td>{rep.period}</td>
+                                <td>{rec.id}</td>
+                                <td>{formatNumberDec(rec.commission_earned)}</td>
+                                <td>{rec.user}</td>
+                                <td>₦{formatNumberDec(rec.wallet_balance)}</td>
+                                <td>{rec.date}</td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
 
                 <Pagination
-                    currentData={filteredReports}
+                    currentData={recons}
                     currentPage={currentPage}
                     itemsPerPage={itemsPerPage}
                     onPageChange={handlePageChange}
