@@ -1,7 +1,7 @@
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
 import styles from './App.module.css'
 
-import { Welcome } from './Onboarding/Welcome/WelcomePage';
+import { Welcome } from './Welcome/WelcomePage';
 import { SignIn } from './AdminSide/Pages/SignIn/SignIn';
 import { FinSignIn } from './FinancialSide/Pages/FinSignIn/FinSignIn';
 

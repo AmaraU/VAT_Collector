@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { getImageUrl } from '../../../utils';
+import { getImageUrl } from '../../utils';
 import styles from './Welcome.module.css';
 
 export const Welcome = () => {

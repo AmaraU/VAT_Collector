@@ -3,6 +3,7 @@ import styles from './FinReconciliation.module.css';
 import { getImageUrl } from "../../../../utils";
 import axios from 'axios';
 import Pagination from "../../../Components/Pagination/Pagination";
+import { Modal } from "@chakra-ui/react";
 
 
 export const FinReconciliation = () => {
@@ -70,6 +71,7 @@ export const FinReconciliation = () => {
 
 
     return (
+        <>
         <div className={styles.whole}>
             
             <div className={styles.reconHeader}>
@@ -148,7 +150,11 @@ export const FinReconciliation = () => {
                     onPageChange={handlePageChange}
                 />
             </div>
-
         </div>
+
+        <Modal>
+
+        </Modal>
+        </>
     )
 }
