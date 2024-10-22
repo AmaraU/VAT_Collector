@@ -1,0 +1,152 @@
+.whole {
+    margin-top: 96px;
+    padding: 32px 40px;
+    width: 100%;
+}
+
+.reportsHeader {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+.reportsHeader h2 {
+    font-size: 32px;
+    font-weight: 600;
+    color: #36394A;
+}
+.reportsHeader button {
+    background: linear-gradient(0deg, #5F57FF, #5F57FF), linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0) 100%);
+    padding: 8px 16px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #FFFFFF;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+.reportsHeader button img {
+    width: 16px;
+    height: 16px;
+}
+
+
+
+.tableDiv {
+    background: #FFFFFF;
+    padding: 16px 24px;
+    border-radius: 16px;
+}
+
+
+.choices {
+    display: flex;
+    gap: 24px;
+}
+.periods,
+.categories {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid #ECEFF3;
+    border-radius: 8px;
+    padding: 4px 4px 4px 12px;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #0D0D12;
+}
+.periods button,
+.categories button {
+    padding: 4px 12px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 12px;
+    font-weight: 500;
+    color: #818898;
+}
+.periods .active,
+.categories .active {
+    padding: 4px 12px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    background: #ECEFF3;
+    font-size: 12px;
+    font-weight: 500;
+    color: #36394A;
+}
+
+
+.closed {
+    display: none;
+}
+.customDiv {
+    display: block;
+    position: absolute;
+    z-index: 5;
+    margin-left: -100px;
+    background: #FFFFFF;
+    box-shadow: 0px 4px 12px 0px #9CA3AF33;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    padding: 8px;
+}
+.customDiv h4 {
+    font-size: 12px;
+    font-weight: 500;
+    color: #36394A;
+    margin-bottom: 12px;
+}
+.customDiv .dates {
+    display: flex;
+    gap: 8px;
+}
+.dates input {
+    border: 1.5px solid #a1a8bb;
+    background: transparent;
+    outline: none;
+    font-size: 12px;
+    font-weight: 500;
+    color: #666D80;
+    padding: 8px 12px;
+}
+.customDiv button {
+    width: 100%;
+    background: linear-gradient(0deg, #5F57FF, #5F57FF), linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0) 100%);
+    padding: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #FFFFFF;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    margin-top: 8px;
+}
+
+
+.reportTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+}
+.reportTable th {
+    padding: 12px 0;
+    text-align: left;
+    font-size: 14px;
+    font-weight: 500;
+    color: #666D80;
+}
+.reportTable tr,
+.reportTable thead {
+    border-bottom: 1px solid #DFE1E7;
+}
+.reportTable td {
+    padding: 12px 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: #0D0D12;
+}

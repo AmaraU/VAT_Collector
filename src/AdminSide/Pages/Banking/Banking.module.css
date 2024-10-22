@@ -1,0 +1,214 @@
+.whole {
+    margin-top: 96px;
+    padding: 32px 40px;
+    width: 100%;
+}
+
+.bankingHeader {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+.bankingHeader h2 {
+    font-size: 32px;
+    font-weight: 600;
+    color: #36394A;
+}
+
+.periods {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid #ECEFF3;
+    border-radius: 8px;
+    padding: 4px 4px 4px 12px;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #0D0D12;
+}
+.periods button {
+    padding: 4px 12px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 12px;
+    font-weight: 500;
+    color: #818898;
+}
+.periods .active {
+    padding: 4px 12px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    background: #ECEFF3;
+    font-size: 12px;
+    font-weight: 500;
+    color: #36394A;
+}
+
+
+
+.closed {
+    display: none;
+}
+.customDiv {
+    display: block;
+    position: absolute;
+    z-index: 5;
+    margin-top: 5px;
+    right: 15px;
+    background: #FFFFFF;
+    box-shadow: 0px 4px 12px 0px #9CA3AF33;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    padding: 8px;
+}
+.customDiv h4 {
+    font-size: 12px;
+    font-weight: 500;
+    color: #36394A;
+    margin-bottom: 12px;
+}
+.customDiv .dates {
+    display: flex;
+    gap: 8px;
+}
+.dates input {
+    border: 1.5px solid #a1a8bb;
+    background: transparent;
+    outline: none;
+    font-size: 12px;
+    font-weight: 500;
+    color: #666D80;
+    padding: 8px 12px;
+}
+.customDiv button {
+    width: 100%;
+    background: linear-gradient(0deg, #5F57FF, #5F57FF), linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0) 100%);
+    padding: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #FFFFFF;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    margin-top: 8px;
+}
+
+
+
+
+.threeRow,
+.twoRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+.threeRow {
+    height: 175px;
+}
+.twoRow {
+    align-items: start;
+}
+
+
+.infoDiv,
+.lineDiv,
+.pieDiv {
+    border-radius: 24px;
+    background: #FFFFFF;
+    padding: 32px 24px;
+    padding-bottom: 50px;
+    gap: 32px;
+    width: 100%;
+}
+.infoDiv h5,
+.lineDiv h5,
+.pieDiv h5 {
+    font-size: 12px;
+    font-weight: 500;
+    color: #666D80;
+    margin-bottom: 32px;
+    height: 100%;
+}
+.infoDiv h1,
+.lineDiv h1,
+.pieDiv h1 {
+    font-size: 36px;
+    font-weight: 600;
+    color: #36394A;
+}
+
+.vatDiv {
+    display: inline-flex;
+    align-items: center;
+    gap: 21px;
+}
+.vatDiv .percentage {
+    background: #40C4AA;
+    color: #FFFFFF;
+    border-radius: 8px;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+}
+
+
+.lineDiv {
+    flex: 67%;
+}
+.pieDiv {
+    flex: 33%;
+}
+
+.pieChart {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    height: 335px;
+}
+.legend {
+    display: flex;
+    gap: 9px;
+}
+.legend .labelColor {
+    width: 20px;
+    height: 6px;
+    margin-top: 6px;
+}
+.legend p {
+    font-size: 14px;
+    font-weight: 500;
+    color: #666D80;
+    margin-bottom: 4px;
+}
+.legend h5 {
+    font-size: 16px;
+    font-weight: 500;
+    color: #0D0D12;
+}
+
+
+.lineLegend {
+    display: flex;
+    gap: 16px;
+    margin-top: 24px;
+}
+.lineLegendItem {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.lineLegendItem .lineLegColor {
+    width: 40px;
+    height: 6px;
+}
+.lineLegendItem p {
+    font-size: 12px;
+    font-weight: 500;
+    color: #666D80;
+}
