@@ -10,8 +10,8 @@ export const Welcome = () => {
         <div className={styles.whole}>
             <div className={styles.div}>
                 <img src={getImageUrl('whiteLogo.svg')} />
-                <button onClick={()=>navigate('admin-signin')}>Sign in to VAT Monitoring</button>
-                <button onClick={()=>navigate('fin-signin')}>Sign in to Financial Analysis</button>
+                <button onClick={()=>navigate('admin-signin')}>VAT Monitoring</button>
+                <button onClick={()=>navigate('fin-signin')}>Financial Analysis</button>
             </div>
         </div>
     );
