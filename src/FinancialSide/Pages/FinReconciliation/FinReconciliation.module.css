@@ -187,20 +187,20 @@
     color: #36394A;
 }
 
-.modalForm {
+.theForm {
     display: flex;
     flex-direction: column;
     max-height: 55vh;
     overflow-y: scroll;
-    gap: 8px;
     margin-bottom: 12px;
 }
 
-.modalForm .formTotals {
+.theForm .formTotals {
     background: #F1F1F4;
     display: flex;
     justify-content: space-between;
     padding: 8px 10px;
+    margin: 12px 0;
 }
 .formTotals p {
     font-size: 12px;
@@ -213,25 +213,21 @@
     color: #0D0D12;
 }
 
-.theForm {
-    display: flex;
-    flex-direction: column;
-}
 .theForm label {
     font-size: 15px;
     font-weight: 500;
     color: #0D0D12;
     margin-bottom: 4px;
 }
-.theForm input {
+.theForm input,
+.theForm select {
     width: 100%;
     border-radius: 9px;
     padding: 11px 13px;
     border: 1.5px solid #ECEFF3;
     margin-bottom: 8px;
 }
-.linkButton,
-.downloadButton {
+.reconcileButton {
     width: 100%;
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0) 100%), linear-gradient(0deg, #000000, #000000);
     color: #FFFFFF;
@@ -247,11 +243,23 @@
     align-items: center;
     text-align: center;
     padding: 12px 0;
+    margin-bottom: 12px;
+    /* margin-top: 8px; */
+    border-radius: 10px;
+}
+.more { background: #166534; }
+.less { background: #D97706; }
+.lesser { background: #B91C1C; }
+
+.complete h4 {
+    font-size: 20px;
+    font-weight: 400;
+    color: #F3F3F3;
 }
 .complete h3 {
-    font-size: 24px;
+    font-size: 32px;
     font-weight: 600;
-    color: #000000;
+    color: #F3F3F3;
 }
 .complete p {
     font-size: 14px;

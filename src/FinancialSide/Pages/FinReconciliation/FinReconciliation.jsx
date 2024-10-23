@@ -13,6 +13,7 @@ export const FinReconciliation = () => {
     const [ category, setCategory ] = useState('');
     const [ currentPage, setCurrentPage ] = useState(1);
     const [ openCustom, setOpenCustom ] = useState(false);
+    const [ variance, setVariance ] = useState(0);
     const { isOpen: isOpenRecon, onOpen: onOpenRecon, onClose: onCloseRecon } = useDisclosure();
     const { isOpen: isOpenLoading, onOpen: onOpenLoading, onClose: onCloseLoading } = useDisclosure();
     const { isOpen: isOpenComplete, onOpen: onOpenComplete, onClose: onCloseComplete } = useDisclosure();
@@ -145,10 +146,17 @@ export const FinReconciliation = () => {
     }
 
     const handleSubmit = () => {
+        setVariance(-1000000);
         onCloseRecon();
         onOpenLoading();
         setTimeout(() => onCloseLoading(), 5000);
         setTimeout(() => onOpenComplete(), 5000);
+    }
+
+    const handleBack = () => {
+        onCloseComplete();
+        onOpenRecon();
+        setVariance(0);
     }
 
     const handleClickOutside = (event) => {
@@ -247,37 +255,40 @@ export const FinReconciliation = () => {
                 <ModalCloseButton />
 
                 <ModalBody>
-                    <div className={styles.modalForm}>
+                    <form action="" className={styles.theForm}>
+
+                        <label htmlFor="bank">Select Bank</label>
+                        <select name="bank" id="">
+                            <option value="">Select bank</option>
+                            <option value="">Access Bank</option>
+                            <option value="">Fidelity Bank</option>
+                            <option value="">First City Monument Bank</option>
+                            <option value="">First Bank</option>
+                            <option value="">GT Bank</option>
+                            <option value="">Union Bank</option>
+                            <option value="">UBA</option>
+                            <option value="">Zenith Bank</option>
+                            <option value="">Keystone Bank</option>
+                            <option value="">Optimus Bank</option>
+                            <option value="">Polaris Bank</option>
+                        </select>
+
+                        <label htmlFor="date">Date</label>
+                        <input type="date" name="date" />
 
                         <div className={styles.formTotals}>
-                            <p>Total Wallet Balance</p>
-                            <p><b>₦{formatNumberDec(142000000)}</b></p>
-                        </div>
-                        <div className={styles.formTotals}>
-                            <p>Total Commission Earned</p>
+                            <p>Amount made:</p>
                             <p><b>₦{formatNumberDec(51000000)}</b></p>
                         </div>
 
-                        <form action="" className={styles.theForm}>
+                        <label htmlFor="statement">Upload Statement</label>
+                        <input type="file" name="statement" />
 
-                            <label htmlFor="unpaid">Unpaid Fund</label>
-                            <input type="number" placeholder="Enter total unpaid amount" />
-
-                            <label htmlFor="investment">Investment Fund</label>
-                            <input type="number" placeholder="Enter amount in investments" />
-
-                            <label htmlFor="format">Additional Charges</label>
-                            <input type="number" placeholder="Enter other charges" />
-
-                            <label htmlFor="format">Post Account Balance</label>
-                            <input type="number" placeholder="Enter final account balance" />
-
-                        </form>
-                    </div>
+                    </form>
                 </ModalBody>
 
                 <ModalFooter pt={2} borderTop='1px solid #DFE1E7'>
-                    <button onClick={()=>handleSubmit('download')} className={styles.downloadButton}>Download</button>
+                    <button onClick={handleSubmit} className={styles.reconcileButton}>Reconcile</button>
                 </ModalFooter>
             </ModalContent>
         </Modal>
@@ -292,11 +303,12 @@ export const FinReconciliation = () => {
         <Modal isCentered size='md' closeOnOverlayClick={false} isOpen={isOpenComplete} onClose={onCloseComplete} >
             <ModalOverlay />
             <ModalContent>
+                <ModalHeader><button onClick={handleBack}><img src={getImageUrl('prevIcon.png')} style={{width: '18px'}}/></button></ModalHeader>
+                <ModalCloseButton />
                 <ModalBody>
-                    <div className={styles.complete}>
-                        <img src={getImageUrl('success.svg')} alt="" />
-                        <h3>Reconciliation Added</h3>
-                        {/* {modalType === 'download' ? <p>Your statement has been downloaded. Check your downloads folder to view it.</p> : ''} */}
+                    <div className={`${styles.complete} ${variance > 0 ? styles.more : variance <= -1000000 ? styles.lesser : styles.less}`}>
+                        <h4>Variance</h4>
+                        <h3>₦{formatNumber(variance)}</h3>
                     </div>
                 </ModalBody>
                 <ModalFooter pt={2} borderTop='1px solid #DFE1E7'>
