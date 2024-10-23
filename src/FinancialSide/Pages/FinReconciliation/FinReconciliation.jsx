@@ -14,6 +14,8 @@ export const FinReconciliation = () => {
     const [ currentPage, setCurrentPage ] = useState(1);
     const [ openCustom, setOpenCustom ] = useState(false);
     const [ variance, setVariance ] = useState(0);
+    const [ bank, setBank ] = useState('');
+    const [ date, setDate ] = useState('');
     const { isOpen: isOpenRecon, onOpen: onOpenRecon, onClose: onCloseRecon } = useDisclosure();
     const { isOpen: isOpenLoading, onOpen: onOpenLoading, onClose: onCloseLoading } = useDisclosure();
     const { isOpen: isOpenComplete, onOpen: onOpenComplete, onClose: onCloseComplete } = useDisclosure();
@@ -146,7 +148,17 @@ export const FinReconciliation = () => {
     }
 
     const handleSubmit = () => {
-        setVariance(-1000000);
+        if (bank === 'access') {
+            setVariance(100000);
+        } else if (bank === 'gtb') {
+            setVariance(-10000);
+        } else if (bank === 'polaris') {
+            setVariance(-1000000);
+        } else {
+            setVariance(500);
+        }
+        setBank('');
+        setDate('');
         onCloseRecon();
         onOpenLoading();
         setTimeout(() => onCloseLoading(), 5000);
@@ -258,27 +270,27 @@ export const FinReconciliation = () => {
                     <form action="" className={styles.theForm}>
 
                         <label htmlFor="bank">Select Bank</label>
-                        <select name="bank" id="">
+                        <select name="bank" id="" onChange={(e)=>setBank(e.target.value)}>
                             <option value="">Select bank</option>
-                            <option value="">Access Bank</option>
-                            <option value="">Fidelity Bank</option>
-                            <option value="">First City Monument Bank</option>
-                            <option value="">First Bank</option>
-                            <option value="">GT Bank</option>
-                            <option value="">Union Bank</option>
-                            <option value="">UBA</option>
-                            <option value="">Zenith Bank</option>
-                            <option value="">Keystone Bank</option>
-                            <option value="">Optimus Bank</option>
-                            <option value="">Polaris Bank</option>
+                            <option value="access">Access Bank</option>
+                            <option value="fidelity">Fidelity Bank</option>
+                            <option value="fcmb">First City Monument Bank</option>
+                            <option value="first">First Bank</option>
+                            <option value="gtb">GT Bank</option>
+                            <option value="union">Union Bank</option>
+                            <option value="uba">UBA</option>
+                            <option value="zenith">Zenith Bank</option>
+                            <option value="keystone">Keystone Bank</option>
+                            <option value="optimus">Optimus Bank</option>
+                            <option value="polaris">Polaris Bank</option>
                         </select>
 
                         <label htmlFor="date">Date</label>
-                        <input type="date" name="date" />
+                        <input type="date" name="date" onChange={(e)=>setDate(e.target.value)} />
 
                         <div className={styles.formTotals}>
                             <p>Amount made:</p>
-                            <p><b>₦{formatNumberDec(51000000)}</b></p>
+                            <p><b>{(date === '') || (bank === '') ? '...' : '₦' + formatNumberDec(51000000)}</b></p>
                         </div>
 
                         <label htmlFor="statement">Upload Statement</label>

@@ -352,16 +352,25 @@ export const FinBanking = () => {
                         <label htmlFor="type">Account Type</label>
                         <select name="type" id="">
                             <option value="">Select account type</option>
+                            <option value="">Corporate</option>
+                            <option value="">Savings</option>
                         </select>
 
                         <label htmlFor="currency">Currency</label>
                         <select name="currency" id="">
                             <option value="">Select currency</option>
+                            <option value="">NGN</option>
+                            <option value="">USD</option>
+                            <option value="">GBP</option>
                         </select>
 
                         <label htmlFor="institution">Financial Institution</label>
                         <select name="institution" id="">
                             <option value="">Select institution</option>
+                            <option value="">Access Bank</option>
+                            <option value="">Zenith Bank</option>
+                            <option value="">GT Bank</option>
+                            <option value="">First Bank</option>
                         </select>
 
                         <label htmlFor="acct_number">Account Number</label>
